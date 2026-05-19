@@ -1,10 +1,18 @@
+import aLittleLife from './assets/pictures/A Little Life.jpg'
+import annaKarenina from './assets/pictures/anna_karenina.jpeg'
+
+import bibliophile from './assets/pictures/bibliophile.jpg'
+import cozyGathering from './assets/pictures/Cozy Gathering Space.jpg'
+import booksImg from './assets/pictures/books.jpg'
+
+
 export const books = [
   {
     id: 1,
     title: "A Little Life",
     author: "Hanya Yanagihara",
     rating: 4.6,
-    image: "./assets/pictures/A Little Life.jpg",
+    image: aLittleLife,
     description:
       "A deeply moving story about friendship, trauma and survival in New York City."
   },
@@ -40,7 +48,7 @@ export const books = [
     title: "Anna Karenina",
     author: "Leo Tolstoy",
     rating: 4.3,
-    image: "./assets/pictures/anna_karenina.jpeg",
+    image: annaKarenina,
     description:
       "A classic novel about love, society and tragedy in imperial Russia."
   }
