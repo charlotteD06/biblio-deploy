@@ -3,6 +3,7 @@
 import bibliophile from '../assets/pictures/bibliophile.jpg'
 import cozyGathering from '../assets/pictures/Cozy Gathering Space.jpg'
 import books from '../assets/pictures/books.jpg'
+import Button from './Button.vue'
 </script>
 
 <template>
@@ -25,7 +26,9 @@ import books from '../assets/pictures/books.jpg'
         <div class="stat"><strong>1K+</strong><span>Book Clubs</span></div>
       </div>
 
-      <a href="#" class="btn-biblio btn">Jetzt eintreten</a>
+      <Button variant="primary">
+        Jetzt eintreten
+      </Button>
     </div>
 
     <!-- Rechte Seite: Bilder-Grid -->

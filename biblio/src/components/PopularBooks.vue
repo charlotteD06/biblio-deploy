@@ -1,4 +1,65 @@
+<script setup>
+import { ref } from 'vue'
+import { books } from '../data.js'
+import BookmarkButton from './BookmarkButton.vue'
+
+const favorites = ref([])
+
+const toggleBookmark = (book) => {
+  const index = favorites.value.findIndex(b => b.id === book.id)
+  if (index === -1) favorites.value.push(book)
+  else favorites.value.splice(index, 1)
+}
+
+const isFavorite = (book) => {
+  return favorites.value.some(b => b.id === book.id)
+}
+
+const selectedBook = ref(null)
+
+const showDetails = (book) => {
+  selectedBook.value = book
+}
+</script>
+
+
 <template>
+<!-- Pop-up -->
+<div
+  class="modal fade"
+  tabindex="-1"
+  :class="{ show: selectedBook }"
+  style="display: block;"
+  v-if="selectedBook"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">{{ selectedBook.title }}</h5>
+        <button type="button" class="btn-close" @click="selectedBook = null"></button>
+      </div>
+
+      <div class="modal-body">
+        <p><strong>Autor:</strong> {{ selectedBook.author }}</p>
+        <p>{{ selectedBook.description }}</p>
+        <p><strong>Rating:</strong> {{ selectedBook.rating }}</p>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" @click="selectedBook = null">
+          Schließen
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div v-if="selectedBook" class="modal-backdrop fade show"></div>
+
+
+
   <section class="popular-section">
 
     <div class="d-flex align-items-center justify-content-between mb-4">
@@ -18,9 +79,10 @@
           <div class="book-cover-img">
             <img :src="book.image" :alt="book.title" />
 
-            <button class="bookmark-btn" @click="toggleBookmark(book)">
-              <i class="bi" :class="isFavorite(book) ? 'bi-bookmark-fill' : 'bi-bookmark'"></i>
-            </button>
+            <BookmarkButton
+                :isActive="isFavorite(book)"
+                @toggle="toggleBookmark(book)"
+            />
           </div>
 
           <h4 class="mt-2">{{ book.title }}</h4>
@@ -46,23 +108,4 @@
   </section>
 </template>
 
-<script setup>
-import { ref } from 'vue'
-import { books } from '../data.js'
 
-const favorites = ref([])
-
-const toggleBookmark = (book) => {
-  const index = favorites.value.findIndex(b => b.id === book.id)
-  if (index === -1) favorites.value.push(book)
-  else favorites.value.splice(index, 1)
-}
-
-const isFavorite = (book) => {
-  return favorites.value.some(b => b.id === book.id)
-}
-
-const showDetails = (book) => {
-  alert(`${book.title}\n\n${book.description}`)
-}
-</script>

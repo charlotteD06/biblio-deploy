@@ -1,3 +1,7 @@
+<script setup>
+import FooterLink from './FooterLink.vue'
+</script>
+
 <template>
 
 <!-- FOOTER -->
@@ -20,16 +24,23 @@
     <!-- Spalte 2 -->
     <div class="col-6 col-lg-2">
       <h5>Entdecken</h5>
-     
+     <FooterLink href="#">Start</FooterLink>
+     <FooterLink href="#">Bücher</FooterLink>
+     <FooterLink href="#">Beliebt</FooterLink>
     </div>
 
     <!-- Spalte 3 -->
     <div class="col-6 col-lg-2">
       <h5>Community</h5>
+      <FooterLink href="#">Start</FooterLink>
+      <FooterLink href="#">Bücher</FooterLink>
+      <FooterLink href="#">Beliebt</FooterLink>
     </div>
     <!-- Spalte 4 -->
     <div class="col-6 col-lg-2">
       <h5>Unternehmen</h5>
+      <FooterLink href="#">Über uns</FooterLink>
+      <FooterLink href="#">Kontakt</FooterLink>  
     </div>
 
   </div>
