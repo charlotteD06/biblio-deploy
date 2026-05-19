@@ -1,0 +1,468 @@
+ /* ===================================================
+       EIGENE VARIABLEN – Farben zentral änderbar
+    =================================================== */
+    :root {
+      --beige:        #faf8f4;
+      --beige-dark:   #f5f0e8;
+      --beige-mid:    #ede8df;
+      --border:       #e5ddd0;
+      --text:         #3a3830;
+      --text-muted:   #7a7568;
+      --heading:      #1a1a18;
+      --accent:       #8AA1B1;   /* Blau-Grau laut Vorgabe */
+      --accent-hover: #6e8a9e;   /* etwas dunkler beim Hover */
+    }
+
+    /* ===================================================
+       BASIS
+    =================================================== */
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background-color: var(--beige);
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* Serifenschrift für Überschriften */
+    .font-serif {
+      font-family: 'Playfair Display', serif;
+    }
+
+    /* ===================================================
+       NAVBAR
+    =================================================== */
+    .navbar {
+      background-color: var(--beige);
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Hamburger-Menü-Button kleiner, ohne Rahmen */
+    .navbar-toggler {
+      padding: 0.2rem 0.45rem;
+      font-size: 0.8rem;
+      border: none;
+      box-shadow: none;
+    }
+
+    .navbar-toggler:focus {
+      box-shadow: none;
+    }
+
+    .navbar-toggler-icon {
+      width: 1.1em;
+      height: 1.1em;
+    }
+
+    .navbar-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--heading) !important;
+    }
+
+    .nav-link {
+      color: var(--text) !important;
+      font-size: 0.88rem;
+    }
+
+    .nav-link:hover {
+      color: var(--accent) !important;
+    }
+
+    /* Primär-Button (Terrakotta) */
+    .btn-biblio {
+      background-color: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 0.45rem 1.3rem;
+      font-size: 0.88rem;
+    }
+
+    .btn-biblio:hover {
+      background-color: var(--accent-hover);
+      color: #fff;
+    }
+
+    /* Outline-Button */
+    .btn-biblio-outline {
+      background: transparent;
+      color: var(--heading);
+      border: 1.5px solid var(--heading);
+      border-radius: 50px;
+      padding: 0.45rem 1.3rem;
+      font-size: 0.88rem;
+    }
+
+    .btn-biblio-outline:hover {
+      background-color: var(--heading);
+      color: #fff;
+    }
+
+    /* ===================================================
+       HERO-BEREICH
+    =================================================== */
+    .hero {
+      background-color: var(--beige-dark);
+      padding: 5rem 5% 4rem;
+      min-height: 520px;
+      /* Overflow verstecken, damit der Kreis nicht überläuft */
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Dekorativer Kreis im Hintergrund (reines CSS, kein Bild nötig) */
+    .hero::after {
+      content: '';
+      position: absolute;
+      right: -80px;
+      top: -80px;
+      width: 480px;
+      height: 480px;
+      background: var(--beige-mid);
+      border-radius: 50%;
+      z-index: 0;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 4vw, 3.4rem);
+      line-height: 1.15;
+      color: var(--heading);
+    }
+
+    /* Das kursive "Connect." in Blau */
+    .hero h1 .accent {
+      color: var(--accent);
+      font-style: italic;
+    }
+
+    .hero p {
+      color: var(--text-muted);
+      max-width: 400px;
+      font-size: 0.95rem;
+    }
+
+    /* ===================================================
+       BUCH-VISUALISIERUNG IM HERO
+       (Bücherstapel als einfache farbige Balken / Buchrücken)
+    =================================================== */
+    .hero-books {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 0.5rem;
+      height: 320px;
+    }
+
+    /* Ein einzelner Buchrücken */
+    .book-spine {
+      width: 52px;
+      border-radius: 4px 2px 2px 4px;
+      box-shadow: 3px 4px 12px rgba(0,0,0,0.15);
+      /* Titel quer (vertikal) */
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      color: rgba(255,255,255,0.75);
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s;
+      cursor: default;
+    }
+
+    .book-spine:hover {
+      transform: translateY(-6px);
+    }
+
+    /* Verschiedene Höhen und Farben für die Buchrücken */
+    .spine-1 { height: 280px; background: linear-gradient(180deg, #c8b89a, #a89070); }
+    .spine-2 { height: 260px; background: linear-gradient(180deg, #b8c4b0, #8ea082); }
+    .spine-3 { height: 250px; background: linear-gradient(180deg, #d4c0a8, #b89878); }
+
+    /* Das "Cover"-Buch (breiter, mit Illustration) */
+    .book-cover {
+      width: 180px;
+      height: 300px;
+      border-radius: 3px 10px 10px 3px;
+      background: linear-gradient(145deg, #c5d8c0, #8aaa98);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      text-align: center;
+      box-shadow: 6px 8px 24px rgba(0,0,0,0.22);
+      transition: transform 0.3s;
+      cursor: default;
+    }
+
+    .book-cover:hover {
+      transform: translateY(-6px) rotate(-1deg);
+    }
+
+    /* Kleine Berg-Illustration auf dem Cover (reines CSS) */
+    .book-mountain {
+      width: 100%;
+      height: 60px;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(180deg, #4a7a68, #2d5a48);
+      clip-path: polygon(0 100%, 30% 30%, 50% 55%, 70% 20%, 100% 100%);
+    }
+
+    .book-cover h3 {
+      font-family: 'Playfair Display', serif;
+      color: #fff;
+      font-size: 1rem;
+      line-height: 1.2;
+    }
+
+    .book-cover small {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.65rem;
+      margin-top: 0.4rem;
+    }
+
+    /* ===================================================
+       FEATURE-KARTEN (Discover, Connect, Review, Organize)
+    =================================================== */
+    .features-section {
+      background: var(--beige);
+      border-top: 1px solid var(--border);
+      padding: 3rem 5%;
+    }
+
+    .feature-card {
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 1.8rem 1.5rem;
+      height: 100%;
+      background: transparent;
+    }
+
+    .feature-card h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--heading);
+    }
+
+    .feature-card p {
+      font-size: 0.83rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    /* Bootstrap Icons in Feature-Karten */
+    .feature-card .icon-wrap {
+      margin-bottom: 0.3rem;
+    }
+
+    .feature-card .bi {
+      font-size: 1.4rem;
+      color: var(--accent);
+    }
+
+    /* ===================================================
+       POPULÄRE BÜCHER
+    =================================================== */
+    .popular-section {
+      background: var(--beige-mid);
+      padding: 4rem 5%;
+    }
+
+    .popular-section h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+    }
+
+    /* Buch-Karte */
+    .book-card .book-cover-img {
+      aspect-ratio: 2 / 3;
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 2px 4px 14px rgba(0,0,0,0.12);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .book-card:hover .book-cover-img {
+      transform: translateY(-4px);
+      box-shadow: 4px 10px 24px rgba(0,0,0,0.2);
+    }
+
+    .book-card .book-cover-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Platzhalter-Cover wenn kein Bild vorhanden */
+    .book-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .book-placeholder h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.85rem;
+      color: #fff;
+      text-transform: uppercase;
+    }
+
+    .book-placeholder small {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.6rem;
+      margin-top: 0.4rem;
+    }
+
+    /* Kleines Lesezeichen-Symbol oben rechts auf der Karte */
+    .bookmark-btn {
+      position: absolute;
+      top: 0.6rem;
+      right: 0.6rem;
+      width: 28px;
+      height: 28px;
+      background: rgba(255,255,255,0.9);
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: var(--accent);
+      opacity: 0;
+      transition: opacity 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .book-card:hover .bookmark-btn { opacity: 1; }
+
+    /* Farbige Hintergründe für Platzhalter-Cover */
+    .bc1 { background: linear-gradient(160deg, #3a2060, #6a2080); }
+    .bc2 { background: linear-gradient(160deg, #1a3a20, #2a5a30); }
+    .bc3 { background: linear-gradient(160deg, #f5e8c0, #e8d090); }
+    .bc4 { background: linear-gradient(160deg, #1a3050, #0a2040); }
+    .bc5 { background: linear-gradient(160deg, #c08040, #8a5020); }
+
+    .book-card h4 { font-size: 0.88rem; font-weight: 600; margin-bottom: 0.15rem; }
+    .book-card .author { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.3rem; }
+
+    /* Sterne-Bewertung */
+    .stars { color: #f0a500; font-size: 0.8rem; }
+
+    /* ===================================================
+       COMMUNITY-BEREICH
+    =================================================== */
+    .community-section {
+      background: var(--beige);
+      padding: 5rem 5%;
+    }
+
+    .community-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .community-section h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      line-height: 1.2;
+      color: var(--heading);
+    }
+
+    .community-section h2 em {
+      color: var(--accent);
+      font-style: italic;
+    }
+
+    .stat strong { display: block; font-size: 1.1rem; font-weight: 700; }
+    .stat span { font-size: 0.78rem; color: var(--text-muted); }
+
+    /* Bildergalerie im Community-Bereich */
+    .community-img-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 0.8rem;
+    }
+
+    .img-box {
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--beige-mid);
+    }
+
+    /* Das rechte Bild soll beide Reihen überspannen */
+    .img-box.tall {
+      grid-row: 1 / span 2;
+      grid-column: 2;
+    }
+
+    .img-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      min-height: 140px;
+    }
+
+    /* ===================================================
+       FOOTER
+    =================================================== */
+    footer {
+      background: var(--beige-dark);
+      border-top: 1px solid var(--border);
+      padding: 3rem 5% 2rem;
+    }
+
+    footer .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--heading);
+    }
+
+    footer h5 { font-size: 0.85rem; font-weight: 600; }
+
+    footer a {
+      text-decoration: none;
+      color: var(--text-muted);
+      font-size: 0.83rem;
+    }
+
+    footer a:hover { color: var(--accent); }
+
+    .footer-tagline {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 0.95rem;
+    }
+
+    /* ===================================================
+       RESPONSIVE ANPASSUNGEN
+       Bootstrap übernimmt das meiste – hier nur Feinschliff
+    =================================================== */
+    @media (max-width: 768px) {
+      .hero::after { display: none; } /* Kreis auf Handy ausblenden */
+    }
