@@ -1,29 +1,31 @@
 <script setup>
 import { ref } from 'vue'
 
-const showBanner = ref(true)
+import { books } from './data.js'
 
-function closeBanner() {
-  showBanner.value = false
+const showDetails = (book) => {
+  alert(`${book.title}\n\n${book.description}`)
 }
+
+const favorites = ref([])
+
+const toggleBookmark = (book) => {
+  const index = favorites.value.findIndex(b => b.id === book.id)
+
+  if (index === -1) {
+    favorites.value.push(book)
+  } else {
+    favorites.value.splice(index, 1)
+  }
+}
+
+const isFavorite = (book) => {
+  return favorites.value.some(b => b.id === book.id)
+}
+
 </script>
 
 <template>
-
-  <!-- Banner -->
-  <div
-    v-if="showBanner"
-    class="text-center py-3"
-    style="background-color:#ede8df;"
-  >
-    Join Biblio today and discover your next favorite book!
-    <button
-      class="btn btn-biblio ms-3"
-      @click="closeBanner"
-    >
-      Got it
-    </button>
-  </div>
 
   <!-- NAVBAR -->
   <nav class="navbar navbar-expand-lg sticky-top">
@@ -235,147 +237,59 @@ function closeBanner() {
   </div>
 
   <!-- Bücher-Raster: 2 Spalten auf Handy, 3 auf Tablet, 5 auf Desktop -->
-  <div class="row row-cols-2 row-cols-md-3 row-cols-xl-5 g-3">
+  <!-- Bücher-Raster -->
+<div class="row row-cols-2 row-cols-md-3 row-cols-xl-5 g-3">
 
-    <!-- ---- BUCH 1 ---- -->
-    <div class="col">
-      <div class="book-card">
-        <div class="book-cover-img">
-          <!--
-            Eigenes Bild einbinden: src="./pictures/A Little Life.jpg"
-            Wenn das Bild nicht gefunden wird, zeigt onerror den Platzhalter.
-          -->
-          <img src="./pictures/A Little Life.jpg" alt="A Little Life"
-               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
-          <div class="book-placeholder bc1" style="display:none">
-            <h4>A Little Life</h4>
-            <small>Hanya Yanagihara</small>
-          </div>
-          <!-- Lesezeichen-Button (erscheint beim Hover) -->
-          <button class="bookmark-btn" aria-label="Lesezeichen">
-            <i class="bi bi-bookmark"></i>
-          </button>
-        </div>
-        <h4 class="mt-2">A Little Life</h4>
-        <div class="author">Hanya Yanagihara</div>
-        <div class="stars">
-          <!-- Sterne-Icons aus Bootstrap Icons -->
-          <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-          <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-          <i class="bi bi-star-half"></i>
-          <span class="text-muted" style="font-size:0.75rem"> 4.6</span>
-        </div>
+  <div class="col" v-for="book in books" :key="book.id">
+    <div class="book-card">
+
+      <div class="book-cover-img">
+        <img
+          :src="book.image"
+          :alt="book.title"
+          @error="$event.target.style.display='none'"
+        />
+
+      <button
+        class="bookmark-btn"
+        aria-label="Lesezeichen"
+        @click="toggleBookmark(book)"
+      >
+        <i
+          class="bi"
+          :class="isFavorite(book) ? 'bi-bookmark-fill' : 'bi-bookmark'"
+        ></i>
+      </button>
       </div>
-    </div>
 
-    <!-- ---- BUCH 2 ---- -->
-    <div class="col">
-      <div class="book-card">
-        <div class="book-cover-img">
-          <img src="https://covers.openlibrary.org/b/isbn/9780571364879-L.jpg"
-               alt="Klara and the Sun"
-               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
-          <div class="book-placeholder bc3" style="display:none">
-            <h4>Klara and the Sun</h4>
-            <small>Kazuo Ishiguro</small>
-          </div>
-          <button class="bookmark-btn" aria-label="Lesezeichen">
-            <i class="bi bi-bookmark"></i>
-          </button>
-        </div>
-        <h4 class="mt-2">Klara and the Sun</h4>
-        <div class="author">Kazuo Ishiguro</div>
-        <div class="stars">
-          <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-          <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-          <i class="bi bi-star-half"></i>
-          <span class="text-muted" style="font-size:0.75rem"> 4.2</span>
-        </div>
+      <h4 class="mt-2">{{ book.title }}</h4>
+      <div class="author">{{ book.author }}</div>
+
+      <div class="stars">
+        <i
+          v-for="n in 5"
+          :key="n"
+          class="bi"
+          :class="n <= Math.round(book.rating) ? 'bi-star-fill' : 'bi-star'"
+        ></i>
+
+        <span class="text-muted" style="font-size:0.75rem">
+          {{ book.rating }}
+        </span>
       </div>
-    </div>
 
-    <!-- ---- BUCH 3 ---- -->
-    <div class="col">
-      <div class="book-card">
-        <div class="book-cover-img">
-          <img src="https://covers.openlibrary.org/b/isbn/9780525559474-L.jpg"
-               alt="The Midnight Library"
-               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
-          <div class="book-placeholder bc4" style="display:none">
-            <h4>The Midnight Library</h4>
-            <small>Matt Haig</small>
-          </div>
-          <button class="bookmark-btn" aria-label="Lesezeichen">
-            <i class="bi bi-bookmark"></i>
-          </button>
-        </div>
-        <h4 class="mt-2">The Midnight Library</h4>
-        <div class="author">Matt Haig</div>
-        <div class="stars">
-          <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-          <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-          <i class="bi bi-star-fill"></i>
-          <span class="text-muted" style="font-size:0.75rem"> 4.7</span>
-        </div>
-      </div>
-    </div>
+      <button
+        class="btn btn-sm btn-outline-secondary mt-2"
+        @click="showDetails(book)"
+      >
+        Details
+      </button>
 
-    <!-- ---- BUCH 4 ---- -->
-    <div class="col">
-      <div class="book-card">
-        <div class="book-cover-img">
-          <img src="https://covers.openlibrary.org/b/isbn/9781649374042-L.jpg"
-               alt="Fourth Wing"
-               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
-          <div class="book-placeholder bc5" style="display:none">
-            <h4>Fourth Wing</h4>
-            <small>Rebecca Yarros</small>
-          </div>
-          <button class="bookmark-btn" aria-label="Lesezeichen">
-            <i class="bi bi-bookmark"></i>
-          </button>
-        </div>
-        <h4 class="mt-2">Fourth Wing</h4>
-        <div class="author">Rebecca Yarros</div>
-        <div class="stars">
-          <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-          <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-          <i class="bi bi-star-fill"></i>
-          <span class="text-muted" style="font-size:0.75rem"> 4.8</span>
-        </div>
-      </div>
     </div>
-
-    <!-- ---- BUCH 5 ---- -->
-    <div class="col">
-      <div class="book-card">
-        <div class="book-cover-img">
-          <!--
-            Lokales Bild: src="./pictures/anna_karenina.jpeg"
-          -->
-          <img src="./pictures/anna_karenina.jpeg"
-               alt="Anna Karenina"
-               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
-          <div class="book-placeholder bc2" style="display:none">
-            <h4>Anna Karenina</h4>
-            <small>Leo Tolstoy</small>
-          </div>
-          <button class="bookmark-btn" aria-label="Lesezeichen">
-            <i class="bi bi-bookmark"></i>
-          </button>
-        </div>
-        <h4 class="mt-2">Anna Karenina</h4>
-        <div class="author">Leo Tolstoy</div>
-        <div class="stars">
-          <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-          <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-          <i class="bi bi-star-half"></i>
-          <span class="text-muted" style="font-size:0.75rem"> 4.3</span>
-        </div>
-      </div>
-    </div>
-
   </div>
+
+</div>
+
 </section>
 
   <section class="community-section">
@@ -409,7 +323,7 @@ function closeBanner() {
           <!--
             Bild einbinden: src="./pictures/bibliophile.jpg"
           -->
-          <img src="./pictures/bibliophile.jpg" alt="Gemütliche Leseecke"
+          <img src=".\assets\pictures\bibliophile.jpg" alt="Gemütliche Leseecke"
                onerror="this.style.opacity='0'" />
         </div>
 
@@ -418,7 +332,7 @@ function closeBanner() {
           <!--
             Bild einbinden: src="./pictures/Cozy Gathering Space.jpg"
           -->
-          <img src="./pictures/Cozy Gathering Space.jpg" alt="Lesegruppe"
+          <img src=".\assets\pictures\Cozy Gathering Space.jpg" alt="Lesegruppe"
                onerror="this.style.opacity='0'" />
         </div>
 
@@ -427,7 +341,7 @@ function closeBanner() {
           <!--
             Bild einbinden: src="./pictures/books.jpg"
           -->
-          <img src="./pictures/books.jpg" alt="Bücher"
+          <img src=".\assets/pictures/books.jpg" alt="Bücher"
                onerror="this.style.opacity='0'" />
         </div>
 
@@ -461,34 +375,16 @@ function closeBanner() {
     <!-- Spalte 2 -->
     <div class="col-6 col-lg-2">
       <h5>Entdecken</h5>
-      <ul class="list-unstyled mt-2">
-        <li class="mb-1"><a href="#">Bücher</a></li>
-        <li class="mb-1"><a href="#">Kategorien</a></li>
-        <li class="mb-1"><a href="#">Buchclubs</a></li>
-        <li class="mb-1"><a href="#">Empfehlungen</a></li>
-      </ul>
+     
     </div>
 
     <!-- Spalte 3 -->
     <div class="col-6 col-lg-2">
       <h5>Community</h5>
-      <ul class="list-unstyled mt-2">
-        <li class="mb-1"><a href="#">Gruppen</a></li>
-        <li class="mb-1"><a href="#">Diskussionen</a></li>
-        <li class="mb-1"><a href="#">Blog</a></li>
-        <li class="mb-1"><a href="#">Events</a></li>
-      </ul>
     </div>
-
     <!-- Spalte 4 -->
     <div class="col-6 col-lg-2">
       <h5>Unternehmen</h5>
-      <ul class="list-unstyled mt-2">
-        <li class="mb-1"><a href="#">Über uns</a></li>
-        <li class="mb-1"><a href="#">Wie es funktioniert</a></li>
-        <li class="mb-1"><a href="#">Kontakt</a></li>
-        <li class="mb-1"><a href="#">Datenschutz</a></li>
-      </ul>
     </div>
 
   </div>
