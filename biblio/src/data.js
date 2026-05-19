@@ -1,5 +1,8 @@
 import aLittleLife from './assets/pictures/A Little Life.jpg'
 import annaKarenina from './assets/pictures/anna_karenina.jpeg'
+import klaraAndTheSun from './assets/pictures/Klara and the Sun.jpg'
+import theMidnightLibrary from './assets/pictures/The Midnight Library.jpg'
+import fourthWing from './assets/pictures/Fourth Wing.jpg'
 
 import bibliophile from './assets/pictures/bibliophile.jpg'
 import cozyGathering from './assets/pictures/Cozy Gathering Space.jpg'
@@ -21,7 +24,7 @@ export const books = [
     title: "Klara and the Sun",
     author: "Kazuo Ishiguro",
     rating: 4.2,
-    image: "https://covers.openlibrary.org/b/isbn/9780571364879-L.jpg",
+    image: klaraAndTheSun,
     description:
       "A story about an artificial friend observing human life and emotions."
   },
@@ -30,7 +33,7 @@ export const books = [
     title: "The Midnight Library",
     author: "Matt Haig",
     rating: 4.7,
-    image: "https://covers.openlibrary.org/b/isbn/9780525559474-L.jpg",
+    image: theMidnightLibrary,
     description:
       "A library between life and death where infinite possibilities exist."
   },
@@ -39,7 +42,7 @@ export const books = [
     title: "Fourth Wing",
     author: "Rebecca Yarros",
     rating: 4.8,
-    image: "https://covers.openlibrary.org/b/isbn/9781649374042-L.jpg",
+    image: fourthWing,
     description:
       "A fantasy story about dragons, war college and survival."
   },
