@@ -34,25 +34,46 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 
 const emit = defineEmits(['filter'])
 
 const name = ref('')
 const category = ref('')
 const categories = ref([])
+const router = useRouter()
+const route = useRoute()
 
 onMounted(async () => {
   try {
     const response = await fetch('http://localhost:8080/api/books')
     if (!response.ok) throw new Error()
+
     const books = await response.json()
-    categories.value = [...new Set(books.map(b => b.category).filter(Boolean))]
+
+    categories.value = [
+      ...new Set(books.map(b => b.category).filter(Boolean))
+    ]
+
   } catch {
-    // Fallback: leere Liste
+    // Fallback
+  }
+
+  // Kategorie aus URL lesen
+  if (route.query.category) {
+    category.value = route.query.category
   }
 })
 
 function emitFilter() {
+
+  router.push({
+    query: {
+      ...route.query,
+      category: category.value || undefined
+    }
+  })
+
   emit('filter', {
     name: name.value,
     category: category.value,
@@ -64,6 +85,7 @@ function resetFilter() {
   category.value = ''
   emitFilter()
 }
+
 </script>
 
 <style scoped>
