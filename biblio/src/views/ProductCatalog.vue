@@ -5,36 +5,47 @@ import { books as localBooks } from '../data.js'
 import PopularBooks from '../components/PopularBooks.vue'
 import Features from '../components/Features.vue'
 import CommunitySection from '../components/CommunitySection.vue'
+import HeroSection from '../components/HeroSection.vue'
+import BookFilter from '../components/BookFilter.vue'
 
-// ── STATE ──────────────────────────────────────────
-// Startet sofort mit lokalen Daten – keine leere Seite
+const API_URL = 'http://localhost:8080/api/books'
+
 const books = ref([...localBooks])
 const isLoading = ref(true)
 const error = ref(null)
 
 const favorites = ref([])
 const selectedBook = ref(null)
-// Backend-URL – hier zentral ändern wenn sich der Port ändert
-const API_URL = 'http://localhost:8080/api/books'
 
 onMounted(async () => {
+  await fetchBooks()
+})
+
+async function fetchBooks(filters = {}) {
+  isLoading.value = true
   try {
-    const response = await fetch(API_URL)
-    
-    if (!response.ok) throw new Error('Backend nicht erreichbar')
-    
+    const params = new URLSearchParams()
+    if (filters.name)     params.append('name', filters.name)
+    if (filters.category) params.append('category', filters.category)
+
+    const url = `${API_URL}${params.toString() ? '?' + params : ''}`
+    const response = await fetch(url)
+    if (!response.ok) throw new Error()
+
     books.value = await response.json()
 
-  } catch (e) {
+  } catch {
     error.value = 'Bücher konnten nicht geladen werden.'
-    // Fallback auf lokale Daten
     books.value = [...localBooks]
   } finally {
     isLoading.value = false
   }
-})
+}
 
-// ── BOOKMARK ───────────────────────────────────────
+function onFilter(filters) {
+  fetchBooks(filters)
+}
+
 const toggleBookmark = (book) => {
   const index = favorites.value.findIndex(b => b.id === book.id)
   if (index === -1) favorites.value.push(book)
@@ -43,13 +54,14 @@ const toggleBookmark = (book) => {
 
 const isFavorite = (book) => favorites.value.some(b => b.id === book.id)
 
-// ── MODAL ──────────────────────────────────────────
 const showDetails = (book) => {
   selectedBook.value = book
 }
 </script>
 
 <template>
+
+  <HeroSection />
 
   <!-- MODAL -->
   <div v-if="selectedBook" class="modal-backdrop fade show"></div>
@@ -71,25 +83,39 @@ const showDetails = (book) => {
 
   <Features />
 
-  <!-- Ladeindikator – nur solange Cover noch laden -->
+  <!-- Ladeindikator -->
   <div v-if="isLoading" class="text-center pt-3 pb-1">
     <div class="spinner-border spinner-border-sm me-2"
          style="color: var(--accent);" role="status"></div>
     <span style="color: var(--text-muted); font-size: 0.85rem;">
-      Cover werden geladen...
+      Bücher werden geladen...
     </span>
   </div>
 
-  <!-- Fehlermeldung – nur wenn API komplett fehlschlägt -->
+  <!-- Fehlermeldung -->
   <div v-if="error" class="container py-2">
     <div class="alert mb-0"
          style="background: var(--beige-dark); border: 1px solid var(--border); border-radius: 12px; font-size: 0.85rem;">
       <i class="bi bi-exclamation-circle me-2" style="color: var(--accent);"></i>
-      {{ error }} Lokale Bilder werden verwendet.
+      {{ error }} Lokale Daten werden verwendet.
     </div>
   </div>
 
-  <!-- Bücher – sofort sichtbar, Cover tauschen sich still aus -->
+
+  <!-- Abstand zwischen Features und Filter -->
+  <div class="container-fluid px-4 px-md-5 mt-4">
+    <BookFilter @filter="onFilter" />
+  </div>
+
+  <PopularBooks
+    :books="books"
+    :isFavorite="isFavorite"
+    @toggle-bookmark="toggleBookmark"
+  />
+
+  <!-- Filter + Bücher -->
+  <BookFilter @filter="onFilter" />
+
   <PopularBooks
     :books="books"
     :isFavorite="isFavorite"

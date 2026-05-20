@@ -41,6 +41,14 @@
           >
             Details
           </router-link>
+          <!-- Bearbeiten-Button -->
+          <router-link
+            v-if="authStore.isAdmin"
+            :to="`/book/${book.id}/edit`"
+            class="btn btn-sm btn-outline-secondary mt-2"
+          >
+            <i class="bi bi-pencil"></i> Bearbeiten
+          </router-link>
 
         </div>
       </div>
@@ -51,7 +59,10 @@
 </template>
 
 <script setup>
+import { useAuthStore } from '../stores/auth.js'
 import BookmarkButton from './BookmarkButton.vue'
+
+const authStore = useAuthStore()
 
 // Props kommen von ProductCatalog
 defineProps({
