@@ -1,5 +1,6 @@
 <script setup>
 import { ref, watch } from 'vue'
+import { useAuthStore } from '../stores/auth.js'
 
 const props = defineProps({
   productId: {
@@ -8,9 +9,62 @@ const props = defineProps({
   }
 })
 
+const authStore = useAuthStore()
 const reviews = ref([])
 const isLoading = ref(false)
 const error = ref(null)
+
+const reviewerName = ref('')
+const comment = ref('')
+const rating = ref(5)
+
+async function createReview() {
+
+  if (!reviewerName.value || !comment.value)
+    return
+
+  const response = await fetch(
+    `http://localhost:8080/api/books/${props.productId}/reviews`,
+    {
+      method: 'POST',
+
+      headers: {
+        'Content-Type': 'application/json'
+      },
+
+      body: JSON.stringify({
+        reviewerName: reviewerName.value,
+        comment: comment.value,
+        rating: rating.value
+      })
+
+    }
+  )
+
+  if(response.ok){
+
+    reviewerName.value = ''
+    comment.value = ''
+    rating.value = 5
+
+    fetchReviews()
+
+  }
+
+}
+
+async function deleteReview(reviewId) {
+  const response = await fetch(
+    `http://localhost:8080/api/books/${props.productId}/reviews/${reviewId}`,
+    {
+      method: 'DELETE'
+    }
+  )
+
+  if (response.ok) {
+    fetchReviews()
+  }
+}
 
 async function fetchReviews() {
   isLoading.value = true
@@ -63,7 +117,7 @@ watch(
       >
         <div class="d-flex justify-content-between align-items-center mb-2">
           <strong>{{ review.username || review.author || 'Gast' }}</strong>
-
+            <div class="d-flex align-items-center gap-2"></div>
           <span class="stars">
             <i
               v-for="n in 5"
@@ -72,6 +126,13 @@ watch(
               :class="n <= Math.round(review.rating) ? 'bi-star-fill' : 'bi-star'"
             ></i>
           </span>
+        <button
+            v-if="authStore.isAdmin"
+            class="btn btn-sm btn-outline-danger"
+            @click="deleteReview(review.id)"
+            >
+            Löschen
+        </button>
         </div>
 
         <p class="mb-0">
@@ -80,6 +141,41 @@ watch(
       </div>
     </div>
   </section>
+  <div class="review-form mt-4">
+
+  <h5>Bewertung schreiben</h5>
+
+  <input
+    v-model="reviewerName"
+    class="form-control mb-2"
+    placeholder="Dein Name"
+  />
+
+  <select
+    v-model="rating"
+    class="form-control mb-2"
+  >
+    <option :value="1">★ 1</option>
+    <option :value="2">★★ 2</option>
+    <option :value="3">★★★ 3</option>
+    <option :value="4">★★★★ 4</option>
+    <option :value="5">★★★★★ 5</option>
+  </select>
+
+  <textarea
+    v-model="comment"
+    class="form-control mb-3"
+    placeholder="Deine Rezension..."
+  ></textarea>
+
+  <button
+    class="btn btn-dark"
+    @click="createReview"
+  >
+    Bewertung speichern
+  </button>
+
+</div>
 </template>
 
 <style scoped>

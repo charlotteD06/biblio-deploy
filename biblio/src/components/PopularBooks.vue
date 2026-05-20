@@ -1,9 +1,11 @@
 <template>
   <section class="popular-section">
 
-    <div class="d-flex justify-content-between mb-4">
-      <h2>Beliebte Bücher</h2>
-    </div>
+    <div class="d-flex justify-content-between mb-3">
+  <h2>Beliebte Bücher</h2>
+</div>
+
+<BookFilter @filter="$emit('filter', $event)" />
 
     <div class="row row-cols-2 row-cols-md-3 row-cols-xl-5 g-3">
 
@@ -61,6 +63,7 @@
 <script setup>
 import { useAuthStore } from '../stores/auth.js'
 import BookmarkButton from './BookmarkButton.vue'
+import BookFilter from './BookFilter.vue'
 
 const authStore = useAuthStore()
 
@@ -70,7 +73,10 @@ defineProps({
   isFavorite: Function
 })
 
-defineEmits(['toggle-bookmark'])
+defineEmits([
+  'toggle-bookmark',
+  'filter'
+])
 </script>
 
 

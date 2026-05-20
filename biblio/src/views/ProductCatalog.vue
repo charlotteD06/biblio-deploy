@@ -94,14 +94,6 @@ const showDetails = (book) => {
 
   <Features />
 
-  <!-- Ladeindikator -->
-  <div v-if="isLoading" class="text-center pt-3 pb-1">
-    <div class="spinner-border spinner-border-sm me-2"
-         style="color: var(--accent);" role="status"></div>
-    <span style="color: var(--text-muted); font-size: 0.85rem;">
-      Bücher werden geladen...
-    </span>
-  </div>
 
   <!-- Fehlermeldung -->
   <div v-if="error" class="container py-2">
@@ -113,21 +105,12 @@ const showDetails = (book) => {
   </div>
 
 
-  <!-- Abstand zwischen Features und Filter -->
-  <div class="container-fluid px-4 px-md-5 mt-4">
-    <BookFilter @filter="onFilter" />
-  </div>
+  <<PopularBooks
+  :books="books"
+  :isFavorite="isFavorite"
+  @toggle-bookmark="toggleBookmark"
+  @filter="onFilter"
+/>
 
- 
-
-  <!-- Bücher -->
-
-  <PopularBooks
-    :books="books"
-    :isFavorite="isFavorite"
-    @toggle-bookmark="toggleBookmark"
-  />
-
-  <CommunitySection />
 
 </template>

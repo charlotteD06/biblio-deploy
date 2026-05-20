@@ -82,38 +82,6 @@
 
    
 
-    <!-- Kommentare -->
-    <hr class="divider my-5" />
-
-    <h5 class="section-title mb-4">Kommentare</h5>
-
-    <div v-if="comments.length > 0" class="comments-list mb-4">
-      <div v-for="(c, index) in comments" :key="index" class="comment-card">
-        <div class="d-flex align-items-center gap-2 mb-1">
-          <div class="comment-avatar">
-            <i class="bi bi-person-fill"></i>
-          </div>
-          <strong class="comment-name">{{ c.name }}</strong>
-        </div>
-        <p class="comment-text mb-0">{{ c.text }}</p>
-      </div>
-    </div>
-
-    <p v-else class="text-muted fst-italic">Noch keine Kommentare – sei der Erste!</p>
-
-    <!-- Kommentar-Eingabe -->
-    <div class="comment-input-wrap">
-      <input
-        v-model="newComment"
-        class="comment-input"
-        placeholder="Schreibe einen Kommentar..."
-        @keyup.enter="addComment"
-      />
-      <button class="comment-submit" @click="addComment">
-        <i class="bi bi-send me-1"></i>Absenden
-      </button>
-    </div>
-
   </div>
 
   <div v-else class="container py-5 text-center">
@@ -189,18 +157,6 @@ function addToList(type) {
   }
 }
 
-// ── KOMMENTARE ─────────────────────────────────────
-const comments = ref([
-  { name: 'Anna Müller', text: 'Mega gutes Buch, hat mich echt mitgenommen!' }
-])
-
-const newComment = ref('')
-
-const addComment = () => {
-  if (!newComment.value.trim()) return
-  comments.value.push({ name: 'Gast', text: newComment.value })
-  newComment.value = ''
-}
 </script>
 
 <style scoped>
