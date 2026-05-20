@@ -1,6 +1,7 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { books as localBooks } from '../data.js'
+import { useRoute } from 'vue-router'
 
 import PopularBooks from '../components/PopularBooks.vue'
 import Features from '../components/Features.vue'
@@ -8,7 +9,7 @@ import CommunitySection from '../components/CommunitySection.vue'
 import HeroSection from '../components/HeroSection.vue'
 import BookFilter from '../components/BookFilter.vue'
 
-import { ref, onMounted, watch } from 'vue'
+
 const API_URL = 'http://localhost:8080/api/books'
 
 const books = ref([...localBooks])

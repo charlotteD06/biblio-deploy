@@ -74,8 +74,13 @@
 
         </div>
 
-      </div>
+      </div> 
+      
     </div>
+  
+    <ProductReviews :product-id="book.id" />
+
+   
 
     <!-- Kommentare -->
     <hr class="divider my-5" />
@@ -122,6 +127,7 @@
 import { ref, onMounted } from 'vue'  // computed nicht mehr nötig
 import { useRoute } from 'vue-router'
 import { useLibraryStore } from '../stores/library'
+import ProductReviews from '../components/ProductReviews.vue'
 
 const API_URL = 'http://localhost:8080/api/books'
 
