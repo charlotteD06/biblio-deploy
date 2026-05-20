@@ -12,10 +12,49 @@
       <div class="collapse navbar-collapse" id="navMenu">
 
         <ul class="navbar-nav me-auto gap-2 ms-3">
-          <li class="nav-item"><a class="nav-link" href="#">Books</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Categories</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Community</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+
+          <li class="nav-item">
+            <router-link class="nav-link" to="/">
+              Alle Bücher
+            </router-link>
+          </li>
+
+          <li class="nav-item">
+            <router-link
+              class="nav-link"
+              to="/?category=Literary Fiction"
+            >
+              Literary Fiction
+            </router-link>
+          </li>
+
+          <li class="nav-item">
+            <router-link
+              class="nav-link"
+              to="/?category=Science Fiction"
+            >
+              Science Fiction
+            </router-link>
+          </li>
+
+          <li class="nav-item">
+            <router-link
+              class="nav-link"
+              to="/?category=Fantasy"
+            >
+              Fantasy
+            </router-link>
+          </li>
+
+          <li class="nav-item">
+            <router-link
+              class="nav-link"
+              to="/?category=Classic"
+            >
+              Classic
+            </router-link>
+          </li>
+
         </ul>
 
         <div class="d-flex align-items-center gap-3">

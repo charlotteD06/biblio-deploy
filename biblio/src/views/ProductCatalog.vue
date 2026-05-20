@@ -8,10 +8,7 @@ import CommunitySection from '../components/CommunitySection.vue'
 import HeroSection from '../components/HeroSection.vue'
 import BookFilter from '../components/BookFilter.vue'
 
-import { useRoute } from 'vue-router'
-import { computed } from 'vue'
-import { watch } from 'vue'
-
+import { ref, onMounted, watch } from 'vue'
 const API_URL = 'http://localhost:8080/api/books'
 
 const books = ref([...localBooks])
@@ -22,10 +19,6 @@ const favorites = ref([])
 const selectedBook = ref(null)
 const route = useRoute()
 
-onMounted(async () => {
-  await fetchBooks()
-})
-
 watch(
   () => route.query.category,
   (newCategory) => {
@@ -34,7 +27,8 @@ watch(
       category: newCategory || ''
     })
 
-  }
+  }, 
+  { immediate: true }
 )
 
 async function fetchBooks(filters = {}) {
