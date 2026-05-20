@@ -119,17 +119,27 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { ref, onMounted } from 'vue'  // computed nicht mehr nötig
 import { useRoute } from 'vue-router'
-import { books } from '../data.js'
 import { useLibraryStore } from '../stores/library'
+
+const API_URL = 'http://localhost:8080/api/books'
 
 const libraryStore = useLibraryStore()
 const route = useRoute()
 
-const book = computed(() =>
-  books.find(b => b.id === Number(route.params.id))
-)
+// ref statt computed – wird von der API befüllt
+const book = ref(null)
+
+onMounted(async () => {
+  try {
+    const response = await fetch(`${API_URL}/${route.params.id}`)
+    if (!response.ok) throw new Error()
+    book.value = await response.json()
+  } catch {
+    // book bleibt null → "Buch nicht gefunden" wird angezeigt
+  }
+})
 
 // ── TOAST ──────────────────────────────────────────
 // toast.visible steuert ob der Banner sichtbar ist.

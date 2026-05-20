@@ -11,7 +11,9 @@
         <div class="book-card">
 
           <div class="book-cover-img">
-            <img :src="book.image" :alt="book.title" />
+            <img :src="book.image" :alt="book.title" 
+            @error="e => e.target.style.display = 'none'"
+            />
 
             <BookmarkButton
               :isActive="isFavorite(book)"

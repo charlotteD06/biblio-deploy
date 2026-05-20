@@ -14,50 +14,26 @@ const error = ref(null)
 
 const favorites = ref([])
 const selectedBook = ref(null)
+// Backend-URL – hier zentral ändern wenn sich der Port ändert
+const API_URL = 'http://localhost:8080/api/books'
 
 onMounted(async () => {
   try {
-    const results = await Promise.all(
-      localBooks.map(book => fetchCover(book.isbn))
-    )
-
-    books.value = localBooks.map((book, index) => ({
-      ...book,
-      // nur ersetzen wenn die API wirklich ein Bild zurückgegeben hat
-      image: results[index] ?? book.image,
-    }))
+    const response = await fetch(API_URL)
+    
+    if (!response.ok) throw new Error('Backend nicht erreichbar')
+    
+    books.value = await response.json()
 
   } catch (e) {
-    error.value = 'Cover konnten nicht geladen werden.'
+    error.value = 'Bücher konnten nicht geladen werden.'
+    // Fallback auf lokale Daten
+    books.value = [...localBooks]
   } finally {
     isLoading.value = false
   }
 })
 
-async function fetchCover(isbn) {
-  try {
-    // Timeout nach 5 Sekunden – Open Library ist manchmal langsam
-    const controller = new AbortController()
-    //const timeout = setTimeout(() => controller.abort(), 5000)
-
-    const response = await fetch(
-      `https://openlibrary.org/api/books?bibkeys=ISBN:${isbn}&format=json&jscmd=data`,
-      { signal: controller.signal }
-    )
-    clearTimeout(timeout)
-
-    if (!response.ok) return null
-
-    const data = await response.json()
-    const bookData = data[`ISBN:${isbn}`]
-
-    return bookData?.cover?.large ?? bookData?.cover?.medium ?? null
-
-  } catch {
-    // Timeout oder Netzwerkfehler → lokales Fallback-Bild wird behalten
-    return null
-  }
-}
 // ── BOOKMARK ───────────────────────────────────────
 const toggleBookmark = (book) => {
   const index = favorites.value.findIndex(b => b.id === book.id)
