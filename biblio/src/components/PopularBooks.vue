@@ -37,20 +37,24 @@
             <span class="text-muted">{{ book.rating }}</span>
           </div>
 
-          <router-link
-            :to="`/product/${book.id}`"
-            class="btn btn-sm btn-outline-secondary mt-2"
-          >
-            Details
-          </router-link>
-          <!-- Bearbeiten-Button -->
-          <router-link
-            v-if="authStore.isAdmin"
-            :to="`/book/${book.id}/edit`"
-            class="btn btn-sm btn-outline-secondary mt-2"
-          >
-            <i class="bi bi-pencil"></i> Bearbeiten
-          </router-link>
+          <div class="book-actions">
+
+            <router-link
+              :to="`/product/${book.id}`"
+              class="btn btn-sm btn-outline-secondary"
+            >
+              Details
+            </router-link>
+
+            <router-link
+              v-if="authStore.isAdmin"
+              :to="`/book/${book.id}/edit`"
+              class="btn btn-sm btn-outline-secondary"
+            >
+              <i class="bi bi-pencil"></i> Bearbeiten
+            </router-link>
+
+          </div>
 
         </div>
       </div>
@@ -78,5 +82,12 @@ defineEmits([
   'filter'
 ])
 </script>
+<style scoped>
+.book-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+</style>
 
 

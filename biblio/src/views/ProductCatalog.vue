@@ -1,6 +1,5 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
-import { books as localBooks } from '../data.js'
 import { useRoute } from 'vue-router'
 
 import PopularBooks from '../components/PopularBooks.vue'
@@ -12,7 +11,7 @@ import BookFilter from '../components/BookFilter.vue'
 
 const API_URL = 'http://localhost:8080/api/books'
 
-const books = ref([...localBooks])
+const books = ref([])
 const isLoading = ref(true)
 const error = ref(null)
 
@@ -47,7 +46,7 @@ async function fetchBooks(filters = {}) {
 
   } catch {
     error.value = 'Bücher konnten nicht geladen werden.'
-    books.value = [...localBooks]
+    books.value = []
   } finally {
     isLoading.value = false
   }
@@ -94,7 +93,6 @@ const showDetails = (book) => {
 
   <Features />
 
-
   <!-- Fehlermeldung -->
   <div v-if="error" class="container py-2">
     <div class="alert mb-0"
@@ -105,12 +103,11 @@ const showDetails = (book) => {
   </div>
 
 
-  <<PopularBooks
+  <PopularBooks
   :books="books"
   :isFavorite="isFavorite"
   @toggle-bookmark="toggleBookmark"
   @filter="onFilter"
 />
-
 
 </template>

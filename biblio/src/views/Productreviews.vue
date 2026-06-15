@@ -1,6 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue'
 
+
 const props = defineProps({
   productId: {
     type: Number,
@@ -45,22 +46,25 @@ async function createReview() {
     rating: rating.value
   }
 
-  const response = await fetch(
-    `http://localhost:8080/api/books/${props.productId}/reviews`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(newReview)
-    }
-  )
+  try {
+    const response = await fetch(
+      `http://localhost:8080/api/books/${props.productId}/reviews`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newReview)
+      }
+    )
 
-  if (response.ok) {
-    reviewerName.value = ''
-    comment.value = ''
-    rating.value = 5
-    fetchReviews()
+    if (response.ok) {
+      comment.value = ''
+      rating.value = 5
+      fetchReviews()
+    }
+  } catch {
+    alert('Bewertung konnte nicht gespeichert werden.')
   }
 }
 
@@ -121,7 +125,10 @@ watch(
         placeholder="Dein Name"
       />
 
-      <select v-model="rating" class="form-control mb-2">
+      <select
+        v-model="rating"
+        class="form-control mb-2"
+      >
         <option :value="1">1 Stern</option>
         <option :value="2">2 Sterne</option>
         <option :value="3">3 Sterne</option>
@@ -135,7 +142,10 @@ watch(
         placeholder="Deine Bewertung..."
       ></textarea>
 
-      <button class="btn btn-dark" @click="createReview">
+      <button
+        class="btn btn-dark"
+        @click="createReview"
+      >
         Bewertung speichern
       </button>
     </div>

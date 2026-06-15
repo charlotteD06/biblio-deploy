@@ -7,7 +7,33 @@
 
     <h2 class="page-title mb-4">Buch bearbeiten</h2>
 
+    <div v-if="message" class="alert alert-success save-alert">
+      <i class="bi bi-check-circle me-2"></i>
+      {{ message }}
+    </div>
+
+    <div v-if="error" class="alert alert-danger save-alert">
+      <i class="bi bi-exclamation-circle me-2"></i>
+      {{ error }}
+    </div>
+
     <div v-if="form" class="form-card">
+      
+      <div class="cover-preview-wrapper">
+        <img
+          v-if="form.image"
+          :src="form.image"
+          alt="Cover Vorschau"
+          class="cover-preview"
+        />
+
+        <div v-else class="cover-placeholder">
+          <i class="bi bi-book"></i>
+          <span>Cover Vorschau</span>
+        </div>
+
+      </div>
+
       <div class="row g-3">
 
         <div class="col-md-6">
@@ -23,13 +49,19 @@
         <div class="col-md-6">
           <label class="form-label">Kategorie</label>
           <select v-model="form.category" class="form-input">
-            <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
+            <option v-for="cat in categories" :key="cat" :value="cat">
+              {{ cat }}
+            </option>
           </select>
         </div>
 
         <div class="col-md-6">
-          <label class="form-label">Bewertung (1–5)</label>
-          <input v-model.number="form.rating" type="number" min="1" max="5" step="0.1" class="form-input" />
+          <label class="form-label">Aktuelle Bewertung</label>
+          <input
+            :value="form.rating + ' ★'"
+            class="form-input"
+            disabled
+          />
         </div>
 
         <div class="col-12">
@@ -42,14 +74,22 @@
           <textarea v-model="form.description" class="form-input" rows="4"></textarea>
         </div>
 
-        <div class="col-12 d-flex gap-2 mt-2 flex-wrap">
+        <div class="col-md-6">
+          <label class="form-label">Seitenanzahl</label>
+          <input
+            v-model.number="form.totalPages"
+            type="number"
+            min="1"
+            class="form-input"
+          />
+        </div>
 
-          <!-- PUT: Buch aktualisieren -->
+
+        <div class="col-12 d-flex gap-2 mt-2 flex-wrap">
           <button class="lib-btn current" @click="updateBook">
             <i class="bi bi-check-lg me-2"></i>Speichern
           </button>
 
-          <!-- DELETE: Buch löschen -->
           <button class="lib-btn danger" @click="deleteBook">
             <i class="bi bi-trash me-2"></i>Löschen
           </button>
@@ -57,7 +97,6 @@
           <router-link to="/" class="lib-btn wishlist">
             Abbrechen
           </router-link>
-
         </div>
 
       </div>
@@ -75,14 +114,17 @@ import { useAuthStore } from '../stores/auth.js'
 
 const API_URL = 'http://localhost:8080/api/books'
 
+const route = useRoute()
+const router = useRouter()
 const authStore = useAuthStore()
+
+const form = ref(null)
+const message = ref('')
+const error = ref('')
+
 if (!authStore.isAdmin) {
   router.push('/')
 }
-const route = useRoute()
-const router = useRouter()
-
-const form = ref(null)
 
 const categories = [
   'Literary Fiction',
@@ -94,20 +136,32 @@ const categories = [
   'Non-Fiction',
 ]
 
-// Buch laden und Formular befüllen
 onMounted(async () => {
   try {
     const response = await fetch(`${API_URL}/${route.params.id}`)
     if (!response.ok) throw new Error()
-    form.value = await response.json()
+
+    const book = await response.json()
+
+    form.value = {
+      title: book.title,
+      author: book.author,
+      category: book.category,
+      rating: book.rating ?? 0,
+      image: book.image,
+      description: book.description,
+      totalPages: book.totalPages ?? 0
+    }
   } catch {
-    alert('Buch konnte nicht geladen werden.')
-    router.push('/')
+    error.value = 'Buch konnte nicht geladen werden.'
+    setTimeout(() => router.push('/'), 1500)
   }
 })
 
-// PUT /api/books/:id – Buch aktualisieren
 async function updateBook() {
+  error.value = ''
+  message.value = ''
+
   try {
     const response = await fetch(`${API_URL}/${route.params.id}`, {
       method: 'PUT',
@@ -117,17 +171,22 @@ async function updateBook() {
 
     if (!response.ok) throw new Error()
 
-    alert('Buch erfolgreich gespeichert!')
-    router.push('/')
+    message.value = 'Buch erfolgreich gespeichert.'
+
+    setTimeout(() => {
+      router.push('/')
+    }, 1000)
 
   } catch {
-    alert('Fehler beim Speichern.')
+    error.value = 'Fehler beim Speichern.'
   }
 }
 
-// DELETE /api/books/:id – Buch löschen
 async function deleteBook() {
   if (!confirm(`„${form.value.title}" wirklich löschen?`)) return
+
+  error.value = ''
+  message.value = ''
 
   try {
     const response = await fetch(`${API_URL}/${route.params.id}`, {
@@ -136,11 +195,14 @@ async function deleteBook() {
 
     if (!response.ok) throw new Error()
 
-    alert('Buch gelöscht.')
-    router.push('/')
+    message.value = 'Buch wurde gelöscht.'
+
+    setTimeout(() => {
+      router.push('/')
+    }, 1000)
 
   } catch {
-    alert('Fehler beim Löschen.')
+    error.value = 'Fehler beim Löschen.'
   }
 }
 </script>
@@ -151,10 +213,13 @@ async function deleteBook() {
   color: var(--text-muted);
   font-size: 0.88rem;
 }
-.back-link:hover { color: var(--accent); }
+
+.back-link:hover {
+  color: var(--accent);
+}
 
 .page-title {
-  font-family: 'Georgia', serif;
+  font-family: Georgia, serif;
   color: var(--heading);
 }
 
@@ -164,6 +229,54 @@ async function deleteBook() {
   border-radius: 16px;
   padding: 2rem;
   max-width: 700px;
+}
+
+.cover-preview-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.cover-preview {
+  width: 180px;
+  height: 260px;
+
+  object-fit: cover;
+
+  border-radius: 14px;
+
+  border: 1px solid var(--border);
+
+  box-shadow:
+    0 12px 24px rgba(0,0,0,0.12),
+    0 4px 8px rgba(0,0,0,0.06);
+}
+
+.cover-placeholder {
+  width: 180px;
+  height: 260px;
+
+  border: 2px dashed var(--border);
+  border-radius: 14px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  color: var(--text-muted);
+
+  background: var(--beige);
+}
+
+.cover-placeholder i {
+  font-size: 3rem;
+  margin-bottom: 0.8rem;
+}
+
+.save-alert {
+  max-width: 700px;
+  border-radius: 14px;
 }
 
 .form-label {
@@ -187,8 +300,13 @@ async function deleteBook() {
   outline: none;
 }
 
-.form-input:focus { border-color: var(--accent); }
-textarea.form-input { resize: vertical; }
+.form-input:focus {
+  border-color: var(--accent);
+}
+
+textarea.form-input {
+  resize: vertical;
+}
 
 .lib-btn {
   border: none;
@@ -202,8 +320,24 @@ textarea.form-input { resize: vertical; }
   text-decoration: none;
   transition: opacity 0.2s;
 }
-.lib-btn:hover { opacity: 0.85; }
-.lib-btn.current  { background: var(--accent); color: #fff; }
-.lib-btn.danger   { background: #c0392b; color: #fff; }
-.lib-btn.wishlist { background: var(--beige-mid); color: var(--heading); border: 1.5px solid var(--border); }
+
+.lib-btn:hover {
+  opacity: 0.85;
+}
+
+.lib-btn.current {
+  background: var(--accent);
+  color: #fff;
+}
+
+.lib-btn.danger {
+  background: #c0392b;
+  color: #fff;
+}
+
+.lib-btn.wishlist {
+  background: var(--beige-mid);
+  color: var(--heading);
+  border: 1.5px solid var(--border);
+}
 </style>

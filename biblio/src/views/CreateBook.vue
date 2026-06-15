@@ -7,6 +7,16 @@
 
     <h2 class="page-title mb-4">Neues Buch hinzufügen</h2>
 
+    <div v-if="message" class="alert alert-success save-alert">
+      <i class="bi bi-check-circle me-2"></i>
+      {{ message }}
+    </div>
+
+    <div v-if="error" class="alert alert-danger save-alert">
+      <i class="bi bi-exclamation-circle me-2"></i>
+      {{ error }}
+    </div>
+
     <div class="form-card">
       <div class="row g-3">
 
@@ -24,29 +34,55 @@
           <label class="form-label">Kategorie</label>
           <select v-model="form.category" class="form-input">
             <option value="">Bitte wählen</option>
-            <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
+            <option v-for="cat in categories" :key="cat" :value="cat">
+              {{ cat }}
+            </option>
           </select>
-        </div>
-
-        <div class="col-md-6">
-          <label class="form-label">Bewertung (1–5)</label>
-          <input v-model.number="form.rating" type="number" min="1" max="5" step="0.1" class="form-input" />
         </div>
 
         <div class="col-12">
           <label class="form-label">Bild-URL</label>
-          <input v-model="form.image" type="text" class="form-input" placeholder="https://..." />
+          <input
+            v-model="form.image"
+            type="text"
+            class="form-input"
+            placeholder="https://..."
+          />
+
+          <div v-if="form.image" class="image-preview">
+            <img
+              :src="form.image"
+              alt="Buchcover Vorschau"
+            />
+          </div>
         </div>
 
         <div class="col-12">
           <label class="form-label">Beschreibung</label>
-          <textarea v-model="form.description" class="form-input" rows="4" placeholder="Kurze Beschreibung..."></textarea>
+          <textarea
+            v-model="form.description"
+            class="form-input"
+            rows="4"
+            placeholder="Kurze Beschreibung..."
+          ></textarea>
         </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Seitenanzahl</label>
+          <input
+            v-model.number="form.totalPages"
+            type="number"
+            min="1"
+            class="form-input"
+            placeholder="z. B. 720"
+          />
+        </div>  
 
         <div class="col-12 d-flex gap-2 mt-2">
           <button class="lib-btn current" @click="createBook">
             <i class="bi bi-plus-lg me-2"></i>Buch hinzufügen
           </button>
+
           <router-link to="/" class="lib-btn wishlist">
             Abbrechen
           </router-link>
@@ -66,17 +102,18 @@ const API_URL = 'http://localhost:8080/api/books'
 
 const router = useRouter()
 
-// Formular-Daten
+const message = ref('')
+const error = ref('')
+
 const form = ref({
   title: '',
   author: '',
   description: '',
-  rating: 4.0,
   image: '',
   category: '',
+  totalPages: 0,
 })
 
-// Kategorien für das Dropdown
 const categories = [
   'Literary Fiction',
   'Science Fiction',
@@ -87,11 +124,12 @@ const categories = [
   'Non-Fiction',
 ]
 
-// POST /api/books – neues Buch erstellen
 async function createBook() {
-  // einfache Validierung
+  message.value = ''
+  error.value = ''
+
   if (!form.value.title || !form.value.author) {
-    alert('Bitte Titel und Autor angeben.')
+    error.value = 'Bitte Titel und Autor angeben.'
     return
   }
 
@@ -104,11 +142,14 @@ async function createBook() {
 
     if (!response.ok) throw new Error()
 
-    alert('Buch erfolgreich hinzugefügt!')
-    router.push('/')  // zurück zur Übersicht
+    message.value = 'Buch erfolgreich hinzugefügt.'
+
+    setTimeout(() => {
+      router.push('/')
+    }, 1000)
 
   } catch {
-    alert('Fehler beim Hinzufügen. Bitte versuche es erneut.')
+    error.value = 'Fehler beim Hinzufügen. Bitte versuche es erneut.'
   }
 }
 </script>
@@ -119,10 +160,13 @@ async function createBook() {
   color: var(--text-muted);
   font-size: 0.88rem;
 }
-.back-link:hover { color: var(--accent); }
+
+.back-link:hover {
+  color: var(--accent);
+}
 
 .page-title {
-  font-family: 'Georgia', serif;
+  font-family: Georgia, serif;
   color: var(--heading);
 }
 
@@ -132,6 +176,11 @@ async function createBook() {
   border-radius: 16px;
   padding: 2rem;
   max-width: 700px;
+}
+
+.save-alert {
+  max-width: 700px;
+  border-radius: 14px;
 }
 
 .form-label {
@@ -155,9 +204,13 @@ async function createBook() {
   outline: none;
 }
 
-.form-input:focus { border-color: var(--accent); }
+.form-input:focus {
+  border-color: var(--accent);
+}
 
-textarea.form-input { resize: vertical; }
+textarea.form-input {
+  resize: vertical;
+}
 
 .lib-btn {
   border: none;
@@ -171,7 +224,33 @@ textarea.form-input { resize: vertical; }
   text-decoration: none;
   transition: opacity 0.2s;
 }
-.lib-btn:hover { opacity: 0.85; }
-.lib-btn.current { background: var(--accent); color: #fff; }
-.lib-btn.wishlist { background: var(--beige-mid); color: var(--heading); border: 1.5px solid var(--border); }
+
+.lib-btn:hover {
+  opacity: 0.85;
+}
+
+.lib-btn.current {
+  background: var(--accent);
+  color: #fff;
+}
+
+.lib-btn.wishlist {
+  background: var(--beige-mid);
+  color: var(--heading);
+  border: 1.5px solid var(--border);
+}
+
+.image-preview {
+  margin-top: 1rem;
+  width: 120px;
+}
+
+.image-preview img {
+  width: 120px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+}
 </style>

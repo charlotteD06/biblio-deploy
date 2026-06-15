@@ -20,35 +20,18 @@ import FooterLink from './FooterLink.vue'
         <a href="#"><i class="bi bi-facebook"></i> Facebook</a>
       </div>
     </div>
-
-    <!-- Spalte 2 -->
-    <div class="col-6 col-lg-2">
-      <h5>Entdecken</h5>
-     <FooterLink href="#">Start</FooterLink>
-     <FooterLink href="#">Bücher</FooterLink>
-     <FooterLink href="#">Beliebt</FooterLink>
-    </div>
-
-    <!-- Spalte 3 -->
-    <div class="col-6 col-lg-2">
-      <h5>Community</h5>
-      <FooterLink href="#">Start</FooterLink>
-      <FooterLink href="#">Bücher</FooterLink>
-      <FooterLink href="#">Beliebt</FooterLink>
-    </div>
     <!-- Spalte 4 -->
-    <div class="col-6 col-lg-2">
-      <h5>Unternehmen</h5>
-      <FooterLink href="#">Über uns</FooterLink>
-      <FooterLink href="#">Kontakt</FooterLink>  
+    <div class="d-flex gap-3 mt-2">
+      <router-link to="/impressum">Impressum</router-link>
+      <router-link to="/datenschutz">Datenschutzerklärung</router-link>
     </div>
-
+    
   </div>
 
   <!-- Footer-Unterzeile -->
   <div class="d-flex justify-content-between align-items-center pt-3"
        style="border-top: 1px solid var(--border);">
-    <p class="mb-0" style="font-size:0.78rem; color:var(--text-muted)">© 2024 Biblio. All rights reserved.</p>
+    <p class="mb-0" style="font-size:0.78rem; color:var(--text-muted)">© 2026 Biblio. All rights reserved.</p>
     <div class="footer-tagline" style="color:var(--text-muted)">Read more. Connect deeper.</div>
   </div>
 </footer>

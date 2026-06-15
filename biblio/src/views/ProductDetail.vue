@@ -2,9 +2,13 @@
   <div class="container py-4" v-if="book">
 
     <!-- Zurück-Link -->
-    <router-link to="/" class="back-link mb-4 d-inline-flex align-items-center gap-2">
-      <i class="bi bi-arrow-left"></i> Zurück
-    </router-link>
+    <button
+      @click="$router.back()"
+      class="back-link mb-4 d-inline-flex align-items-center gap-2"
+    >
+      <i class="bi bi-arrow-left"></i>
+      Zurück
+    </button>
 
     <!-- =============================================
          TOAST BANNER
@@ -61,15 +65,18 @@
         <div class="d-flex gap-2 flex-wrap">
 
           <button class="lib-btn current" @click="addToList('current')">
-            <i class="bi bi-book-half me-2"></i>Aktuell lesen
+            <i class="bi bi-book me-2"></i>
+            Aktuell lesen
           </button>
 
           <button class="lib-btn wishlist" @click="addToList('wishlist')">
-            <i class="bi bi-bookmark-heart me-2"></i>Wunschliste
+            <i class="bi bi-bookmark me-2"></i>
+            Wunschliste
           </button>
 
           <button class="lib-btn completed" @click="addToList('completed')">
-            <i class="bi bi-check-circle me-2"></i>Abgeschlossen
+            <i class="bi bi-check-circle me-2"></i>
+            Abgeschlossen
           </button>
 
         </div>
@@ -97,9 +104,11 @@ import { useRoute } from 'vue-router'
 import { useLibraryStore } from '../stores/library'
 import ProductReviews from '../components/ProductReviews.vue'
 
+const libraryStore = useLibraryStore()
+
+
 const API_URL = 'http://localhost:8080/api/books'
 
-const libraryStore = useLibraryStore()
 const route = useRoute()
 
 // ref statt computed – wird von der API befüllt
@@ -162,13 +171,21 @@ function addToList(type) {
 <style scoped>
 /* ── ZURÜCK-LINK ── */
 .back-link {
-  text-decoration: none;
+  background: none;
+  border: none;
+
+  padding: 0;
+
   color: var(--text-muted);
   font-size: 0.88rem;
-  transition: color 0.2s;
-}
-.back-link:hover { color: var(--accent); }
 
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  color: var(--accent);
+}
 /* ── TOAST BANNER ── */
 .toast-banner {
   background-color: var(--accent);
