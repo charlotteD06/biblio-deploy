@@ -3,6 +3,7 @@ import ProductCatalog from '../views/ProductCatalog.vue'
 import ProductDetail from '../views/ProductDetail.vue'
 import CreateBook from '../views/CreateBook.vue'
 import EditBook from '../views/EditBook.vue'
+import FriendsView from '../views/FriendsView.vue'
 
 import LoginView from '../views/LoginView.vue'
 import ProfileView from '../views/ProfileView.vue'
@@ -96,6 +97,12 @@ const router = createRouter({
   path: '/friends/:id',
   name: 'friend-profile',
   component: FriendProfileView,
+  meta: { requiresAuth: true }
+},
+{
+  path: '/friends',
+  name: 'friends',
+  component: FriendsView,
   meta: { requiresAuth: true }
 },
   ]

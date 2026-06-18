@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth.js'
 import { useLibraryStore } from '../stores/library.js'
+import { useFriendsStore } from '../stores/friends.js'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -40,22 +41,9 @@ const recommendedBooks = [
   }
 ]
 
-const friends = [
-  {
-    id: 1,
-    name: 'Alina',
-    bookTitle: 'Anna Karenina',
-    bookProgress: 'Seite 487',
-    bookId: 2
-  },
-  {
-    id: 2,
-    name: 'Paul',
-    bookTitle: 'Der Prozess',
-    bookProgress: 'fertig',
-    bookId: 5
-  }
-]
+const friendsStore = useFriendsStore()
+
+const friends = computed(() => friendsStore.friends)
 
 function goToFriendProfile(friendId) {
   router.push(`/friends/${friendId}`)
@@ -247,8 +235,8 @@ function saveProgress() {
       <section class="friends-card">
         <div class="section-header">
           <h2>Freunde lesen</h2>
-          <button class="details-link" @click="router.push('/library')">
-            Alle anzeigen
+          <button class="details-link" @click="router.push('/friends')">
+              Alle anzeigen
           </button>
         </div>
 
@@ -265,13 +253,14 @@ function saveProgress() {
 
             <p>
               Liest
-              <button
-                class="book-title-link"
-                @click="goToBook(friend.bookId)"
-              >
-                {{ friend.bookTitle }}
-              </button>
-              · {{ friend.bookProgress }}
+            <button
+              class="book-title-link"
+              @click="goToBook(friend.currentBook.id)"
+            >
+              {{ friend.currentBook.title }}
+            </button>
+
+            · {{ friend.currentBook.progress }}
             </p>
 
             <button

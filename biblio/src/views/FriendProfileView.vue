@@ -1,89 +1,14 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useFriendsStore } from '../stores/friends.js'
 
 const route = useRoute()
 const router = useRouter()
-
-const friends = [
-  {
-    id: 1,
-    name: 'Alina',
-    bio: 'Liest gerne Klassiker, emotionale Romane und Bücher über starke Figuren.',
-    currentBook: {
-      id: 2,
-      title: 'Anna Karenina',
-      author: 'Leo Tolstoy',
-      image: 'https://covers.openlibrary.org/b/isbn/9780140449174-L.jpg',
-      progress: 68
-    },
-    favoriteBooks: [
-      {
-        id: 2,
-        title: 'Anna Karenina',
-        author: 'Leo Tolstoy',
-        image: 'https://covers.openlibrary.org/b/isbn/9780140449174-L.jpg'
-      },
-      {
-        id: 1,
-        title: 'A Little Life',
-        author: 'Hanya Yanagihara',
-        image: 'https://covers.openlibrary.org/b/isbn/9780804172707-L.jpg'
-      },
-      {
-        id: 3,
-        title: 'The Secret History',
-        author: 'Donna Tartt',
-        image: 'https://covers.openlibrary.org/b/isbn/9780316055437-L.jpg'
-      }
-    ],
-    favoriteCharacters: [
-      'Anna Karenina',
-      'Jude St. Francis',
-      'Willem Ragnarsson'
-    ]
-  },
-  {
-    id: 2,
-    name: 'Paul',
-    bio: 'Mag Kafka, kurze philosophische Romane und Bücher, die zum Nachdenken bringen.',
-    currentBook: {
-      id: 5,
-      title: 'Der Prozess',
-      author: 'Franz Kafka',
-      image: 'https://covers.openlibrary.org/b/isbn/9783150009675-L.jpg',
-      progress: 100
-    },
-    favoriteBooks: [
-      {
-        id: 5,
-        title: 'Der Prozess',
-        author: 'Franz Kafka',
-        image: 'https://covers.openlibrary.org/b/isbn/9783150009675-L.jpg'
-      },
-      {
-        id: 6,
-        title: 'Der kleine Prinz',
-        author: 'Antoine de Saint-Exupéry',
-        image: 'https://covers.openlibrary.org/b/isbn/9780156012195-L.jpg'
-      },
-      {
-        id: 3,
-        title: 'The Secret History',
-        author: 'Donna Tartt',
-        image: 'https://covers.openlibrary.org/b/isbn/9780316055437-L.jpg'
-      }
-    ],
-    favoriteCharacters: [
-      'Josef K.',
-      'Der kleine Prinz',
-      'Donna Tartt'
-    ]
-  }
-]
+const friendsStore = useFriendsStore()
 
 const friend = computed(() =>
-  friends.find(f => f.id === Number(route.params.id))
+  friendsStore.friends.find(f => f.id === Number(route.params.id))
 )
 
 function goToBook(id) {
@@ -120,8 +45,14 @@ function goToBook(id) {
           <p>{{ friend.currentBook.author }}</p>
         </div>
 
-        <div class="current-reading-content" @click="goToBook(friend.currentBook.id)">
-          <img :src="friend.currentBook.image" :alt="friend.currentBook.title" />
+        <div
+          class="current-reading-content"
+          @click="goToBook(friend.currentBook.id)"
+        >
+          <img
+            :src="friend.currentBook.image"
+            :alt="friend.currentBook.title"
+          />
 
           <div class="reading-info">
             <strong>{{ friend.currentBook.progress }}%</strong>
