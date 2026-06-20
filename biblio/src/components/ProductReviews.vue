@@ -20,8 +20,8 @@ const rating = ref(5)
 
 async function createReview() {
 
-  if (!reviewerName.value || !comment.value)
-    return
+ if (!comment.value)
+  return
 
   const response = await fetch(
     `http://localhost:8080/api/books/${props.productId}/reviews`,
@@ -33,10 +33,13 @@ async function createReview() {
       },
 
       body: JSON.stringify({
-        reviewerName: reviewerName.value,
-        comment: comment.value,
-        rating: rating.value
-      })
+      reviewerName: authStore.isLoggedIn
+        ? authStore.user.name
+        : (reviewerName.value || 'Gast'),
+
+      comment: comment.value,
+      rating: rating.value
+    })
 
     }
   )
@@ -116,7 +119,7 @@ watch(
         class="review-card"
       >
         <div class="d-flex justify-content-between align-items-center mb-2">
-          <strong>{{ review.username || review.author || 'Gast' }}</strong>
+          <strong>{{ review.reviewerName || 'Gast' }}</strong>
             <div class="d-flex align-items-center gap-2"></div>
           <span class="stars">
             <i

@@ -1,5 +1,9 @@
 <script setup>
 import { ref, watch } from 'vue'
+import { useAuthStore } from '../stores/auth.js'
+
+const authStore = useAuthStore()
+console.log('User:', authStore.user)
 
 
 const props = defineProps({
@@ -37,14 +41,19 @@ async function fetchReviews() {
   }
 }
 
-async function createReview() {
-  if (!reviewerName.value.trim() || !comment.value.trim()) return
+  async function createReview() {
+    if (!comment.value.trim()) return
 
   const newReview = {
-    reviewerName: reviewerName.value,
+    reviewerName: authStore.isLoggedIn
+      ? authStore.user.name
+      : (reviewerName.value || 'Gast'),
+
     comment: comment.value,
     rating: rating.value
   }
+
+  console.log('Review wird gesendet:', newReview)
 
   try {
     const response = await fetch(
@@ -119,11 +128,12 @@ watch(
     <div class="review-form mt-4">
       <h5>Neue Bewertung schreiben</h5>
 
-      <input
-        v-model="reviewerName"
-        class="form-control mb-2"
-        placeholder="Dein Name"
-      />
+    <input
+      v-if="!authStore.isLoggedIn"
+      v-model="reviewerName"
+      class="form-control mb-2"
+      placeholder="Dein Name"
+    />
 
       <select
         v-model="rating"
@@ -141,6 +151,14 @@ watch(
         class="form-control mb-2"
         placeholder="Deine Bewertung..."
       ></textarea>
+
+      <div
+        v-if="authStore.isLoggedIn"
+        class="mb-2 text-muted"
+      >
+        Bewertung als
+        <strong>{{ authStore.user.name }}</strong>
+      </div>
 
       <button
         class="btn btn-dark"
