@@ -12,7 +12,8 @@ export const useFriendsStore = defineStore('friends', {
           title: 'Anna Karenina',
           author: 'Leo Tolstoy',
           image: 'https://covers.openlibrary.org/b/isbn/9780143035008-L.jpg',
-          progress: 68
+          progress: 68, 
+          
         },
         favoriteBooks: [
           {

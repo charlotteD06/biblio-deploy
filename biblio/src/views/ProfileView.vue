@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useAuthStore } from '../stores/auth.js'
+import { characters } from '../stores/characters'
 
 const authStore = useAuthStore()
 
@@ -9,6 +10,36 @@ const email = ref(authStore.user?.email || '')
 const bio = ref(authStore.user?.bio || '')
 const profileImage = ref(authStore.user?.profileImage || '')
 const saved = ref(false)
+
+const selectedCharacter = ref(null)
+const selectedCharacterName = ref('')
+
+function showCharacter(characterName) {
+
+  selectedCharacterName.value = characterName
+
+  selectedCharacter.value =
+    characters[characterName] || {
+      bookId: null,
+      book: 'Unbekannt',
+      description: 'Keine Beschreibung vorhanden.'
+    }
+}
+
+function removeCharacter(characterName) {
+
+  favoriteCharacters.value =
+    favoriteCharacters.value.filter(
+      c => c !== characterName
+    )
+
+  localStorage.setItem(
+    'biblio-favorite-characters',
+    JSON.stringify(favoriteCharacters.value)
+  )
+
+  selectedCharacter.value = null
+}
 
 const yearlyGoal = ref(50)
 const booksRead = ref(32)
@@ -21,6 +52,17 @@ const booksLeft = computed(() =>
   Math.max(yearlyGoal.value - booksRead.value, 0)
 )
 
+const favoriteCharacters = ref(
+  JSON.parse(localStorage.getItem('biblio-favorite-characters')) || [
+    'Jude St. Francis',
+    'Willem Ragnarsson',
+    'Anna Karenina'
+  ]
+)
+
+const showAddCharacterModal = ref(false)
+const selectedNewCharacter = ref('')
+
 function saveProfile() {
   authStore.updateUser({
     name: name.value,
@@ -32,6 +74,36 @@ function saveProfile() {
   saved.value = true
   setTimeout(() => saved.value = false, 2500)
 }
+
+function goToBook(id) {
+  router.push(`/product/${id}`)
+}  
+
+function addCharacter() {
+
+  if (!selectedNewCharacter.value) return
+
+  if (
+    favoriteCharacters.value.includes(
+      selectedNewCharacter.value
+    )
+  ) {
+    return
+  }
+
+  favoriteCharacters.value.push(
+    selectedNewCharacter.value
+  )
+
+  localStorage.setItem(
+    'biblio-favorite-characters',
+    JSON.stringify(favoriteCharacters.value)
+  )
+
+  selectedNewCharacter.value = ''
+  showAddCharacterModal.value = false
+}
+
 </script>
 
 <template>
@@ -144,17 +216,125 @@ function saveProfile() {
           <h2>Lieblingscharaktere</h2>
         </div>
 
-        <div class="character-tags">
-          <span>Jude St. Francis</span>
-          <span>Willem Ragnarsson</span>
-          <span>Anna Karenina</span>
+        
 
-          <span class="character-add">
+        <div class="character-tags">
+
+          <button
+            v-for="character in favoriteCharacters"
+            :key="character"
+            class="character-chip"
+            @click="showCharacter(character)"
+          >
+            {{ character }}
+          </button>
+
+          <span
+            class="character-add"
+            @click="showAddCharacterModal = true"
+          >
             <i class="bi bi-plus-lg"></i>
           </span>
+
         </div>
+      
       </article>
     </section>
+    <div
+      v-if="selectedCharacter"
+      class="character-modal-backdrop"
+      @click="selectedCharacter = null"
+    >
+      <div
+        class="character-modal"
+        @click.stop
+      >
+
+        <p class="eyebrow">Charakter</p>
+
+        <h2>{{ selectedCharacter.book }}</h2>
+
+        <p class="character-description">
+          {{ selectedCharacter.description }}
+        </p>
+
+        <button
+          v-if="selectedCharacter.bookId"
+          class="book-link-btn"
+          @click="goToBook(selectedCharacter.bookId)"
+        >
+          Zum Buch
+        </button>
+
+        <button
+          class="remove-btn"
+          @click="removeCharacter(selectedCharacterName)"
+        >
+          Aus Favoriten entfernen
+        </button>
+
+        <button
+          class="close-btn"
+          @click="selectedCharacter = null"
+        >
+          Schließen
+        </button>
+
+      </div>
+    </div>
+    <div
+  v-if="showAddCharacterModal"
+  class="character-modal-backdrop"
+  @click="showAddCharacterModal = false"
+>
+
+      <div
+        class="character-modal"
+        @click.stop
+      >
+
+        <h2>Lieblingscharakter hinzufügen</h2>
+
+        <select
+          v-model="selectedNewCharacter"
+          class="character-select"
+        >
+
+          <option value="">
+            Bitte wählen
+          </option>
+
+          <option
+            v-for="name in Object.keys(characters)"
+            :key="name"
+            :value="name"
+          >
+            {{ name }}
+          </option>
+
+        </select>
+
+        <div class="modal-actions">
+
+          <button
+            class="book-link-btn"
+            @click="addCharacter"
+          >
+            Hinzufügen
+          </button>
+
+          <button
+            class="close-btn"
+            @click="showAddCharacterModal = false"
+          >
+            Abbrechen
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
   </main>
 </template>
 
@@ -448,6 +628,107 @@ textarea {
   cursor: pointer;
 }
 
+.character-chip {
+  border: none;
+  background: var(--accent);
+
+  border-radius: 999px;
+  padding: .55rem 1rem;
+
+  cursor: pointer;
+
+  transition: .2s;
+}
+
+.character-chip:hover {
+  transform: translateY(-2px);
+}
+
+.character-modal-backdrop {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(0,0,0,.45);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 1000;
+}
+
+.character-modal {
+  width: min(500px, 90vw);
+
+  background: var(--beige);
+
+  padding: 2rem;
+
+  border-radius: 24px;
+}
+
+.character-description {
+  margin: 1rem 0;
+  line-height: 1.7;
+}
+
+.book-link-btn,
+.close-btn {
+  border: none;
+  border-radius: 999px;
+
+  padding: .65rem 1rem;
+}
+
+.book-link-btn {
+  background: var(--accent);
+  margin-right: .75rem;
+}
+
+.close-btn {
+  background: var(--beige-dark);
+}
+
+.character-add {
+  width: 42px;
+  height: 42px;
+
+  border-radius: 50%;
+
+  background: var(--beige-dark);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  transition: .2s;
+}
+
+.character-add:hover {
+  transform: scale(1.08);
+}
+
+.character-select {
+  width: 100%;
+
+  padding: .8rem;
+
+  border-radius: 12px;
+
+  border: 1px solid var(--border);
+
+  margin-top: 1rem;
+}
+
+.modal-actions {
+  margin-top: 1rem;
+
+  display: flex;
+  gap: .75rem;
+}
+
 @media (max-width: 850px) {
   .profile-hero {
     flex-direction: column;
@@ -465,5 +746,23 @@ textarea {
   .characters-card {
     grid-column: auto;
   }
+}
+
+.remove-btn {
+  border: none;
+  border-radius: 999px;
+
+  padding: .65rem 1rem;
+
+  background: #b86b6b;
+  color: white;
+
+  margin-right: .75rem;
+
+  cursor: pointer;
+}
+
+.remove-btn:hover {
+  opacity: .9;
 }
 </style>

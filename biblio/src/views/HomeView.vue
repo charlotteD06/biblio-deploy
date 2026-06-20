@@ -20,6 +20,7 @@ const readingLog = ref(
   JSON.parse(localStorage.getItem('biblio-reading-log')) || []
 )
 
+
 const recommendedBooks = [
   {
     id: 1,
