@@ -72,6 +72,12 @@
     </router-link>
   </li>
 
+  <li class="nav-item" v-if="authStore.isUser">
+    <router-link class="nav-link" to="/bookclubs" @click="closeMenu">
+      Buchclubs
+    </router-link>
+  </li>
+
   <li class="nav-item" v-if="!authStore.isAdmin">
     <router-link class="nav-link" to="/kontakt" @click="closeMenu">
       Kontakt

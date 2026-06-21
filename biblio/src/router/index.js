@@ -16,6 +16,9 @@ import RegisterView from '../views/RegisterView.vue'
 import LibraryView from '../views/LibraryView.vue'
 import FriendProfileView from '../views/FriendProfileView.vue'
 import UsersView from '../views/UsersView.vue'
+import BookClubsView from '../views/BookClubsView.vue'
+import BookClubDetailView from '../views/BookClubDetailView.vue'
+import CreateBookClubView from '../views/CreateBookClubView.vue'
 
 import { useAuthStore } from '../stores/auth.js'
 
@@ -94,22 +97,34 @@ const router = createRouter({
   component: LibraryView,
   meta: { requiresAuth: true }
     },
-  {
-  path: '/friends/:id',
-  name: 'friend-profile',
-  component: FriendProfileView,
-  meta: { requiresAuth: true }
-},
-{
-  path: '/friends',
-  name: 'friends',
-  component: FriendsView,
-  meta: { requiresAuth: true }
-},
-{
-  path: '/users',
-  component: UsersView
-},
+    {
+    path: '/friends/:id',
+    name: 'friend-profile',
+    component: FriendProfileView,
+    meta: { requiresAuth: true }
+    },
+    {
+    path: '/friends',
+    name: 'friends',
+    component: FriendsView,
+    meta: { requiresAuth: true }
+    },
+    {
+    path: '/users',
+    component: UsersView
+    },
+    {
+    path: '/bookclubs',
+    component: BookClubsView
+    },
+    {
+    path: '/bookclubs/:id',
+    component: BookClubDetailView
+    },
+    {
+    path: '/bookclubs/create',
+    component: CreateBookClubView
+   },
   ]
 })
 

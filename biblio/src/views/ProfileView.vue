@@ -2,7 +2,9 @@
 import { ref, computed } from 'vue'
 import { useAuthStore } from '../stores/auth.js'
 import { characters } from '../stores/characters'
+import { useBookClubStore } from '../stores/bookclubs'
 
+const bookClubStore = useBookClubStore()
 const authStore = useAuthStore()
 
 const name = ref(authStore.user?.name || '')
@@ -15,6 +17,31 @@ const selectedCharacter = ref(null)
 const selectedCharacterName = ref('')
 
 const editMode = ref(false)
+
+const userClubs = computed(() => {
+
+  if (!authStore.user)
+    return []
+
+  return bookClubStore.clubs.filter(club =>
+    club.members.some(
+      member =>
+        member.name === authStore.user.name
+    )
+  )
+
+})
+
+const createdClubs = computed(() => {
+
+  if (!authStore.user)
+    return []
+
+  return bookClubStore.clubs.filter(
+    club => club.createdBy === authStore.user.name
+  )
+
+})
 
 function showCharacter(characterName) {
 
@@ -225,43 +252,75 @@ function addCharacter() {
         </div>
       </article>
 
-      <article class="bookclub-card">
+      <article class="bookclubs-card">
 
-        <div class="section-header">
-          <h2>Aktiver Buchclub</h2>
-        </div>
+        <h2>Aktive Buchclubs</h2>
 
-        <div class="club-header">
-          <span class="club-badge">
-            📖 Contemporary Fiction Club
-          </span>
-        </div>
+        <div class="club-grid">
 
-        <div class="club-content">
+          <div
+            v-for="club in userClubs"
+            :key="club.id"
+            class="club-card"
+          >
 
-          <h3>A Little Life</h3>
+            <div class="club-icon">
+              📚
+            </div>
 
-          <p>
-            <strong>Nächstes Treffen:</strong><br>
-            26.06.2026
-          </p>
+            <div>
+              <strong>{{ club.name }}</strong>
 
-          <p>
-            <strong>Thema:</strong><br>
-            Kapitel 4–6
-          </p>
+              <p class="club-role">
+                Mitglied
+              </p>
+            </div>
 
-          <p>
-            <strong>Diskussion:</strong>
-          </p>
-
-          <ul>
-            <li>Judes Vergangenheit</li>
-            <li>Die Freundschaft der vier Freunde</li>
-            <li>Willems Rolle in der Gruppe</li>
-          </ul>
+          </div>
 
         </div>
+
+      </article>
+
+      <article class="bookclubs-card">
+
+        <h2>Meine Buchclubs</h2>
+
+        <div
+          v-if="createdClubs.length"
+          class="clubs-list"
+        >
+
+          <div
+            v-for="club in createdClubs"
+            :key="club.id"
+            class="club-owner-card"
+          >
+
+            <div>
+
+              <strong>{{ club.name }}</strong>
+
+              <p class="owner-role">
+                Club-Ersteller
+              </p>
+
+            </div>
+
+            <span class="owner-badge">
+              👑
+            </span>
+
+          </div>
+
+        </div>
+
+        <p
+          v-else
+          class="text-muted"
+        >
+          Du hast noch keinen eigenen Buchclub erstellt.
+        </p>
 
       </article>
 
@@ -503,7 +562,9 @@ function addCharacter() {
 .side-card,
 .favorites-card,
 .challenge-card,
-.characters-card {
+.characters-card,
+.bookclubs-card 
+{
   background: rgba(247, 241, 230, 0.76);
   border: 1px solid rgba(255,255,255,0.45);
   border-radius: 24px;
@@ -696,16 +757,6 @@ textarea {
   box-shadow: 0 3px 8px rgba(0,0,0,0.12);
 }
 
-.character-add {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-width: 48px;
-  background: var(--beige);
-  border: 1px dashed var(--border);
-  cursor: pointer;
-}
-
 .character-chip {
   border: none;
   background: var(--accent);
@@ -865,58 +916,77 @@ textarea {
   background: #d9d4ca;
 }
 
-.bookclub-card {
-  background: rgba(247, 241, 230, 0.76);
-  border: 1px solid rgba(255,255,255,0.45);
-  border-radius: 24px;
-  padding: 1.4rem;
 
-  box-shadow:
-    0 12px 30px rgba(0,0,0,0.08),
-    inset 0 1px 0 rgba(255,255,255,0.65);
+.club-owner-card {
+  display: flex;
 
-  backdrop-filter: blur(10px);
+  justify-content: space-between;
+  align-items: center;
+
+  padding: .9rem 1rem;
+
+  border-radius: 16px;
+
+  background: rgba(255,255,255,.55);
+
+  margin-bottom: .75rem;
 }
 
-.club-badge {
-  display: inline-block;
-
-  padding: .45rem .9rem;
-
-  border-radius: 999px;
-
-  background: rgba(138,161,177,.15);
-  color: var(--accent);
-
+.owner-role {
+  margin: 0;
   font-size: .85rem;
-  font-weight: 500;
-}
-
-.club-header {
-  margin-bottom: 1rem;
-}
-
-.club-content h3 {
-  font-family: Georgia, serif;
-  margin-bottom: 1rem;
-}
-
-.club-content p {
-  margin-bottom: .8rem;
   color: var(--text-muted);
 }
 
-.club-content strong {
-  color: var(--text);
+.owner-badge {
+  font-size: 1.2rem;
 }
 
-.club-content ul {
-  margin: 0;
-  padding-left: 1.2rem;
+.club-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-.club-content li {
-  margin-bottom: .4rem;
+.club-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  padding: 1rem;
+
+  border-radius: 18px;
+
+  background: rgba(255,255,255,.55);
+
+  border: 1px solid rgba(255,255,255,.45);
+
+  transition: .2s;
+}
+
+.club-card:hover {
+  transform: translateY(-2px);
+}
+
+.club-icon {
+  width: 46px;
+  height: 46px;
+
+  border-radius: 12px;
+
+  background: rgba(138,161,177,.15);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 1.2rem;
+}
+
+.club-role {
+  margin: .2rem 0 0;
+  color: var(--text-muted);
+  font-size: .85rem;
 }
 
 @media (max-width: 850px) {

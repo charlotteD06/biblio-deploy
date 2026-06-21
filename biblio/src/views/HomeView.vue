@@ -5,6 +5,7 @@ import { useAuthStore } from '../stores/auth.js'
 import { useLibraryStore } from '../stores/library.js'
 import { useFriendsStore } from '../stores/friends.js'
 
+
 const router = useRouter()
 const authStore = useAuthStore()
 const libraryStore = useLibraryStore()

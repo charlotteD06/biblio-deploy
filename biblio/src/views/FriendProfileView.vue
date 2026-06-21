@@ -3,10 +3,12 @@ import { computed, ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useFriendsStore } from '../stores/friends.js'
 import { characters } from '../stores/characters'
+import { useBookClubStore } from '../stores/bookclubs'
 
 const route = useRoute()
 const router = useRouter()
 const friendsStore = useFriendsStore()
+const bookClubStore = useBookClubStore()
 
 const books = ref([])
 
@@ -30,6 +32,21 @@ const friend = computed(() => {
       f => f.id === Number(route.params.id)
     )
   )
+})
+
+const friendClubs = computed(() => {
+
+  if (!friend.value)
+    return []
+
+  return bookClubStore.clubs.filter(club =>
+
+    club.members.some(
+      member => member.name === friend.value.name
+    )
+
+  )
+
 })
 
 const currentBookData = computed(() =>
@@ -153,6 +170,31 @@ function goToBook(id) {
           </div>
 
         </div>
+
+      </article>
+
+      <article class="bookclubs-card">
+
+        <h2>Aktive Buchclubs</h2>
+
+        <div
+          v-if="friendClubs.length"
+          class="clubs-list"
+        >
+
+          <div
+            v-for="club in friendClubs"
+            :key="club.id"
+            class="club-chip"
+          >
+            📖 {{ club.name }}
+          </div>
+
+        </div>
+
+        <p v-else>
+          Noch keinem Buchclub beigetreten.
+        </p>
 
       </article>
 
@@ -504,5 +546,35 @@ function goToBook(id) {
     width: 120px;
     height: 180px;
   }
+}
+
+.bookclubs-card {
+  background: rgba(247,241,230,.76);
+
+  border-radius: 24px;
+
+  padding: 1.4rem;
+
+  border: 1px solid rgba(255,255,255,.45);
+}
+
+.clubs-list {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: .75rem;
+}
+
+.club-chip {
+  background: rgba(138,161,177,.15);
+
+  color: var(--accent);
+
+  padding: .5rem .9rem;
+
+  border-radius: 999px;
+
+  font-size: .9rem;
 }
 </style>
