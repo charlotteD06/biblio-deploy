@@ -12,7 +12,7 @@ export const useAuthStore = defineStore('auth', {
   },
 
   actions: {
-    login(email, password) {
+        login(email, password) {
       if (email === 'admin@biblio.de' && password === 'admin') {
         this.user = {
           name: 'Admin',
@@ -21,6 +21,7 @@ export const useAuthStore = defineStore('auth', {
           bio: 'Ich verwalte die Biblio-Plattform.',
           profileImage: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=400'
         }
+
         localStorage.setItem('biblioUser', JSON.stringify(this.user))
         return true
       }
@@ -33,6 +34,7 @@ export const useAuthStore = defineStore('auth', {
           bio: 'Bücher sind für mich der perfekte Ausgleich.',
           profileImage: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=400'
         }
+
         localStorage.setItem('biblioUser', JSON.stringify(this.user))
         return true
       }

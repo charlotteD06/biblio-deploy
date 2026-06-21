@@ -14,6 +14,8 @@ const saved = ref(false)
 const selectedCharacter = ref(null)
 const selectedCharacterName = ref('')
 
+const editMode = ref(false)
+
 function showCharacter(characterName) {
 
   selectedCharacterName.value = characterName
@@ -72,7 +74,11 @@ function saveProfile() {
   })
 
   saved.value = true
-  setTimeout(() => saved.value = false, 2500)
+  editMode.value = false
+
+  setTimeout(() => {
+    saved.value = false
+  }, 2500)
 }
 
 function goToBook(id) {
@@ -118,10 +124,6 @@ function addCharacter() {
         <p>Bearbeite deine persönlichen Daten, dein Profilbild und deine Lieblingsinhalte.</p>
       </div>
 
-      <div class="avatar-preview">
-        <img v-if="profileImage" :src="profileImage" alt="Profilbild" />
-        <i v-else class="bi bi-person-fill"></i>
-      </div>
     </section>
 
     <div v-if="saved" class="alert alert-success save-alert">
@@ -130,7 +132,43 @@ function addCharacter() {
     </div>
 
     <section class="profile-grid">
-      <article class="settings-card">
+      <article
+  v-if="!editMode"
+  class="settings-card"
+>
+
+  <div class="profile-overview">
+
+    <div class="profile-image-large">
+      <img
+        v-if="profileImage"
+        :src="profileImage"
+        alt="Profilbild"
+      />
+      <i
+        v-else
+        class="bi bi-person-fill"
+      ></i>
+    </div>
+
+    <h2>{{ name }}</h2>
+
+    <p class="profile-bio">
+      {{ bio }}
+    </p>
+
+    <button
+      class="edit-profile-btn"
+      @click="editMode = true"
+    >
+      <i class="bi bi-pencil"></i>
+      Profil bearbeiten
+    </button>
+
+  </div>
+
+</article>
+    <article v-if="editMode" class="settings-card">
         <h2>Persönliche Daten</h2>
 
         <label>Profilname</label>
@@ -145,22 +183,22 @@ function addCharacter() {
         <label>Persönliche Beschreibung</label>
         <textarea v-model="bio"></textarea>
 
-        <button @click="saveProfile">Änderungen speichern</button>
-      </article>
+        <div class="button-row">
 
-      <aside class="side-card">
-        <h2>Profilvorschau</h2>
+          <button @click="saveProfile">
+            Änderungen speichern
+          </button>
 
-        <div class="mini-profile">
-          <div class="avatar-small">
-            <img v-if="profileImage" :src="profileImage" alt="Profilbild" />
-            <i v-else class="bi bi-person-fill"></i>
-          </div>
+          <button
+            class="cancel-btn"
+            @click="editMode = false"
+          >
+            Abbrechen
+          </button>
 
-          <h3>{{ name }}</h3>
-          <p>{{ bio }}</p>
         </div>
-      </aside>
+      </article>
+      
 
       <article class="favorites-card">
         <div class="section-header">
@@ -185,6 +223,46 @@ function addCharacter() {
             <span>Hinzufügen</span>
           </div>
         </div>
+      </article>
+
+      <article class="bookclub-card">
+
+        <div class="section-header">
+          <h2>Aktiver Buchclub</h2>
+        </div>
+
+        <div class="club-header">
+          <span class="club-badge">
+            📖 Contemporary Fiction Club
+          </span>
+        </div>
+
+        <div class="club-content">
+
+          <h3>A Little Life</h3>
+
+          <p>
+            <strong>Nächstes Treffen:</strong><br>
+            26.06.2026
+          </p>
+
+          <p>
+            <strong>Thema:</strong><br>
+            Kapitel 4–6
+          </p>
+
+          <p>
+            <strong>Diskussion:</strong>
+          </p>
+
+          <ul>
+            <li>Judes Vergangenheit</li>
+            <li>Die Freundschaft der vier Freunde</li>
+            <li>Willems Rolle in der Gruppe</li>
+          </ul>
+
+        </div>
+
       </article>
 
       <article class="challenge-card">
@@ -245,8 +323,6 @@ function addCharacter() {
         @click.stop
       >
 
-        <p class="eyebrow">Charakter</p>
-
         <div
           v-if="selectedCharacter"
           class="character-modal"
@@ -265,9 +341,6 @@ function addCharacter() {
           >
             Zum Buch
           </button>
-
-        </div>
-
         <button
           class="remove-btn"
           @click="removeCharacter(selectedCharacterName)"
@@ -281,6 +354,10 @@ function addCharacter() {
         >
           Schließen
         </button>
+
+        </div>
+
+
 
       </div>
     <div
@@ -419,7 +496,7 @@ function addCharacter() {
   margin: auto;
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .settings-card,
@@ -430,7 +507,7 @@ function addCharacter() {
   background: rgba(247, 241, 230, 0.76);
   border: 1px solid rgba(255,255,255,0.45);
   border-radius: 24px;
-  padding: 1.6rem;
+  padding: 1.1rem;
   box-shadow:
     0 12px 30px rgba(0,0,0,0.08),
     inset 0 1px 0 rgba(255,255,255,0.65);
@@ -438,7 +515,7 @@ function addCharacter() {
 }
 
 .settings-card {
-  grid-row: span 2;
+  grid-row: span 1;
 }
 
 .characters-card {
@@ -573,7 +650,7 @@ textarea {
 }
 
 .challenge-number strong {
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-family: Georgia, serif;
 }
 
@@ -634,11 +711,12 @@ textarea {
   background: var(--accent);
 
   border-radius: 999px;
-  padding: .55rem 1rem;
+  padding: .35rem .8rem;
 
   cursor: pointer;
 
   transition: .2s;
+  font-size: .85;
 }
 
 .character-chip:hover {
@@ -728,6 +806,117 @@ textarea {
 
   display: flex;
   gap: .75rem;
+}
+
+.profile-overview {
+  text-align: center;
+  padding: 1rem;
+}
+
+.profile-image-large {
+  width: 100px;
+  height: 100px;
+
+  margin: 0 auto 1 rem;
+
+  border-radius: 50%;
+  overflow: hidden;
+
+  background: var(--beige-dark);
+}
+
+.profile-image-large img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-bio {
+  max-width: 500px;
+  margin: .75rem auto 1rem;
+  color: var(--text-muted);
+  font-size: .9rem;
+}
+
+.edit-profile-btn {
+  border: none;
+  border-radius: 999px;
+
+  padding: .8rem 1.3rem;
+
+  background: var(--accent);
+  color: white;
+
+  cursor: pointer;
+}
+
+.button-row {
+  display: flex;
+  gap: .75rem;
+  margin-top: 1.25rem;
+}
+
+.cancel-btn {
+  border: none;
+  border-radius: 999px;
+
+  padding: .65rem 1rem;
+
+  background: #d9d4ca;
+}
+
+.bookclub-card {
+  background: rgba(247, 241, 230, 0.76);
+  border: 1px solid rgba(255,255,255,0.45);
+  border-radius: 24px;
+  padding: 1.4rem;
+
+  box-shadow:
+    0 12px 30px rgba(0,0,0,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.65);
+
+  backdrop-filter: blur(10px);
+}
+
+.club-badge {
+  display: inline-block;
+
+  padding: .45rem .9rem;
+
+  border-radius: 999px;
+
+  background: rgba(138,161,177,.15);
+  color: var(--accent);
+
+  font-size: .85rem;
+  font-weight: 500;
+}
+
+.club-header {
+  margin-bottom: 1rem;
+}
+
+.club-content h3 {
+  font-family: Georgia, serif;
+  margin-bottom: 1rem;
+}
+
+.club-content p {
+  margin-bottom: .8rem;
+  color: var(--text-muted);
+}
+
+.club-content strong {
+  color: var(--text);
+}
+
+.club-content ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.club-content li {
+  margin-bottom: .4rem;
 }
 
 @media (max-width: 850px) {
