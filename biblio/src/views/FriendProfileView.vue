@@ -19,11 +19,18 @@ onMounted(async () => {
   }
 })
 
-const friend = computed(() =>
-  friendsStore.friends.find(
-    f => f.id === Number(route.params.id)
+const friend = computed(() => {
+
+  return (
+    friendsStore.friends.find(
+      f => f.id === Number(route.params.id)
+    ) ||
+
+    friendsStore.allUsers.find(
+      f => f.id === Number(route.params.id)
+    )
   )
-)
+})
 
 const currentBookData = computed(() =>
   books.value.find(

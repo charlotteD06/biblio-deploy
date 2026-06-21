@@ -240,11 +240,6 @@ function addCharacter() {
       
       </article>
     </section>
-    <div
-      v-if="selectedCharacter"
-      class="character-modal-backdrop"
-      @click="selectedCharacter = null"
-    >
       <div
         class="character-modal"
         @click.stop
@@ -252,19 +247,26 @@ function addCharacter() {
 
         <p class="eyebrow">Charakter</p>
 
-        <h2>{{ selectedCharacter.book }}</h2>
-
-        <p class="character-description">
-          {{ selectedCharacter.description }}
-        </p>
-
-        <button
-          v-if="selectedCharacter.bookId"
-          class="book-link-btn"
-          @click="goToBook(selectedCharacter.bookId)"
+        <div
+          v-if="selectedCharacter"
+          class="character-modal"
         >
-          Zum Buch
-        </button>
+
+          <h2>{{ selectedCharacter.book }}</h2>
+
+          <p class="character-description">
+            {{ selectedCharacter.description }}
+          </p>
+
+          <button
+            v-if="selectedCharacter.bookId"
+            class="book-link-btn"
+            @click="goToBook(selectedCharacter.bookId)"
+          >
+            Zum Buch
+          </button>
+
+        </div>
 
         <button
           class="remove-btn"
@@ -281,7 +283,6 @@ function addCharacter() {
         </button>
 
       </div>
-    </div>
     <div
   v-if="showAddCharacterModal"
   class="character-modal-backdrop"

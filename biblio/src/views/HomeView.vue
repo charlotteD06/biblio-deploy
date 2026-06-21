@@ -44,7 +44,7 @@ const recommendedBooks = [
 
 const friendsStore = useFriendsStore()
 
-const friends = computed(() => friendsStore.friends)
+const friends = computed(() => friendsStore.friends.slice(0, 3))
 
 function goToFriendProfile(friendId) {
   router.push(`/friends/${friendId}`)
@@ -235,7 +235,10 @@ function saveProgress() {
 
       <section class="friends-card">
         <div class="section-header">
-          <h2>Freunde lesen</h2>
+          <h2>
+            Freunde lesen
+          </h2>
+
           <button class="details-link" @click="router.push('/friends')">
               Alle anzeigen
           </button>
@@ -689,5 +692,14 @@ function saveProgress() {
   color: var(--text-muted);
   padding: 0.3rem 0.75rem;
   font-size: 0.75rem;
+}
+
+.friend-count {
+  font-size: .8rem;
+  background: var(--accent);
+  color: white;
+
+  padding: .2rem .6rem;
+  border-radius: 999px;
 }
 </style>

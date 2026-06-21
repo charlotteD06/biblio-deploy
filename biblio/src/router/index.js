@@ -15,6 +15,7 @@ import ChallengesView from '../views/ChallengesView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import LibraryView from '../views/LibraryView.vue'
 import FriendProfileView from '../views/FriendProfileView.vue'
+import UsersView from '../views/UsersView.vue'
 
 import { useAuthStore } from '../stores/auth.js'
 
@@ -104,6 +105,10 @@ const router = createRouter({
   name: 'friends',
   component: FriendsView,
   meta: { requiresAuth: true }
+},
+{
+  path: '/users',
+  component: UsersView
 },
   ]
 })
