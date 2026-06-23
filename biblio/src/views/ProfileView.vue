@@ -10,6 +10,7 @@ const authStore = useAuthStore()
 const name = ref(authStore.user?.name || '')
 const email = ref(authStore.user?.email || '')
 const bio = ref(authStore.user?.bio || '')
+const quote = ref(authStore.user?.quote || '')
 const profileImage = ref(authStore.user?.profileImage || '')
 const saved = ref(false)
 
@@ -97,6 +98,7 @@ function saveProfile() {
     name: name.value,
     email: email.value,
     bio: bio.value,
+    quote: quote.value,
     profileImage: profileImage.value
   })
 
@@ -178,11 +180,23 @@ function addCharacter() {
       ></i>
     </div>
 
-    <h2>{{ name }}</h2>
+    <h2 class="profile-name">
+  {{ name || 'Leser:in' }}
+</h2>
 
-    <p class="profile-bio">
-      {{ bio }}
-    </p>
+<p
+  v-if="quote"
+  class="profile-quote"
+>
+  „{{ quote }}“
+</p>
+
+<p
+  v-if="bio"
+  class="profile-bio"
+>
+  {{ bio }}
+</p>
 
     <button
       class="edit-profile-btn"
@@ -209,6 +223,13 @@ function addCharacter() {
 
         <label>Persönliche Beschreibung</label>
         <textarea v-model="bio"></textarea>
+
+        <label>Persönliche Quote</label>
+        <textarea
+        v-model="quote"
+        maxlength="160"
+        placeholder= "It's the kind of kiss that inspires stars to climb into the sky and light up the world."
+        ></textarea>
 
         <div class="button-row">
 
@@ -887,6 +908,15 @@ textarea {
   margin: .75rem auto 1rem;
   color: var(--text-muted);
   font-size: .9rem;
+}
+.profile-quote {
+  max-width: 560px;
+  margin: 0.7rem auto 1rem;
+  color: var(--text-muted);
+  font-family: serif;
+  font-size: 1.15rem;
+  font-style: italic;
+  line-height: 1.6;
 }
 
 .edit-profile-btn {
