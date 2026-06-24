@@ -4,7 +4,7 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 
-const repoName = '/frontend-biblio/'
+const repoName = '/biblio-deploy/'
 
 export default defineConfig({
   base: process.env.NODE_ENV === 'production'
