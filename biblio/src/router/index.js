@@ -1,4 +1,5 @@
-import { createRouter, createWebHashHistory } from 'vue-router'import ProductCatalog from '../views/ProductCatalog.vue'
+import { createRouter, createWebHashHistory } from 'vue-router'
+import ProductCatalog from '../views/ProductCatalog.vue'
 import ProductDetail from '../views/ProductDetail.vue'
 import CreateBook from '../views/CreateBook.vue'
 import EditBook from '../views/EditBook.vue'
