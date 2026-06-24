@@ -1,8 +1,14 @@
 <template>
-  <section class="popular-section">
+  <section 
+  id="popular-section"
+  class="popular-section"
+  :class="{ 'no-box': !boxed }"
+  >
 
-    <div class="d-flex justify-content-between mb-3">
-  <h2>Beliebte Bücher</h2>
+<div class="d-flex justify-content-between mb-3">
+  <h2 v-if="showTitle">
+   Beliebte Bücher
+  </h2>
 </div>
 
 <BookFilter @filter="$emit('filter', $event)" />
@@ -74,7 +80,17 @@ const authStore = useAuthStore()
 // Props kommen von ProductCatalog
 defineProps({
   books: Array,
-  isFavorite: Function
+  isFavorite: Function,
+  showTitle: {
+    type: Boolean,
+    default: true
+  },
+
+  boxed: {
+  type: Boolean,
+  default: true
+}
+
 })
 
 defineEmits([
@@ -87,6 +103,16 @@ defineEmits([
   display: flex;
   gap: 0.75rem;
   margin-top: 0.75rem;
+}
+
+.no-box {
+  background: transparent !important;
+
+  padding: 0 !important;
+
+  border-radius: 0 !important;
+
+  box-shadow: none !important;
 }
 </style>
 

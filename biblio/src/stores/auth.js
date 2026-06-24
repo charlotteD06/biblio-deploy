@@ -15,6 +15,7 @@ export const useAuthStore = defineStore('auth', {
         login(email, password) {
       if (email === 'admin@biblio.de' && password === 'admin') {
         this.user = {
+          id: 999,
           name: 'Admin',
           email: 'admin@biblio.de',
           role: 'ADMIN',
@@ -28,6 +29,7 @@ export const useAuthStore = defineStore('auth', {
 
       if (email === 'lisa@biblio.de' && password === 'user') {
         this.user = {
+          id: 100,
           name: 'Lisa',
           email: 'lisa@biblio.de',
           role: 'USER',

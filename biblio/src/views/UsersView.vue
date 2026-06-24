@@ -27,6 +27,10 @@ const users = computed(() => {
 
 function addFriend(user) {
   friendsStore.addFriend(user)
+  
+  toastStore.trigger(
+  `${user.name} wurde als Freund hinzugefügt`
+)
 }
 
 function openProfile(id) {

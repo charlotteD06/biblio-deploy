@@ -1,14 +1,19 @@
 <script setup>
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useBookClubStore } from '../stores/bookclubs'
 import { useAuthStore } from '../stores/auth'
-import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const authStore = useAuthStore()
 const route = useRoute()
+
+const authStore = useAuthStore()
 const bookClubStore = useBookClubStore()
+
+const editingMeeting = ref(false)
+
+const meetingDate = ref('')
+const meetingTopic = ref('')
 
 const club = computed(() =>
   bookClubStore.clubs.find(
@@ -22,14 +27,43 @@ const isMember = computed(() => {
     return false
 
   return club.value.members.some(
-    member => member.name === authStore.user.name
+    member => member.id === authStore.user.id
   )
-
 })
+
+const isOwner = computed(() => {
+
+  if (!club.value || !authStore.user)
+    return false
+
+  return club.value.ownerId === authStore.user.id
+})
+
+function joinClub() {
+
+  if (!authStore.user)
+    return
+
+  bookClubStore.joinClub(
+    club.value.id,
+    authStore.user
+  )
+}
+
+function leaveClub() {
+
+  if (!authStore.user)
+    return
+
+  bookClubStore.leaveClub(
+    club.value.id,
+    authStore.user.id
+  )
+}
 
 function openProfile(memberId) {
 
-  if(memberId === 0) {
+  if (memberId === 0) {
     router.push('/profile')
     return
   }
@@ -37,157 +71,212 @@ function openProfile(memberId) {
   router.push(`/friends/${memberId}`)
 }
 
+function startMeetingEdit() {
+
+  meetingDate.value =
+    club.value.nextMeeting.date
+
+  meetingTopic.value =
+    club.value.nextMeeting.topic
+
+  editingMeeting.value = true
+}
+
+function saveMeeting() {
+
+  bookClubStore.updateMeeting(
+    club.value.id,
+    {
+      date: meetingDate.value,
+      topic: meetingTopic.value
+    }
+  )
+
+  editingMeeting.value = false
+}
 </script>
 
 <template>
   <main
     v-if="club"
-    class="club-detail-page"
+    class="club-page"
   >
 
-    <section class="club-header">
+    <section class="club-card">
 
-      <div>
+      <div class="club-header">
 
-        <div class="title-row">
+        <div>
 
-          <h1>{{ club.name }}</h1>
+          <div class="title-row">
 
-          <span
-            v-if="club.official"
-            class="official-badge"
-          >
-            ✓ Offiziell
-          </span>
+            <h1>{{ club.name }}</h1>
+
+            <span
+              v-if="club.official"
+              class="official-badge"
+            >
+              ✓ Offiziell
+            </span>
+
+          </div>
+
+          <p class="club-description">
+            {{ club.description }}
+          </p>
+
+          <div class="club-meta">
+
+            <span>
+              👥 {{ club.members.length }} Mitglieder
+            </span>
+
+            <span>
+              👤 {{ club.createdBy }}
+            </span>
+
+            <span>
+              📅 {{ club.createdAt }}
+            </span>
+
+          </div>
 
         </div>
 
-        <p class="club-description">
-          {{ club.description }}
-        </p>
-
-        <div class="club-actions">
-
         <button
-            v-if="!isMember"
-            class="join-btn"
-            @click="bookClubStore.joinClub(
-            club.id, userName)"
+          v-if="!isMember"
+          class="join-btn"
+          @click="joinClub"
         >
-            Beitreten
+          Beitreten
         </button>
 
         <button
-            v-else
-            class="leave-btn"
-            @click="bookClubStore.leaveClub(
-            club.id,
-            authStore.user.name
-            )"
+          v-else
+          class="leave-btn"
+          @click="leaveClub"
         >
-            Verlassen
+          Verlassen
         </button>
+
+      </div>
+
+      <div class="content-grid">
+
+        <div class="content-card">
+
+          <h2>📚 Aktuelles Buch</h2>
+
+          <p class="big-text">
+            {{ club.currentBook.title }}
+          </p>
+
+        </div>
+
+        <div class="content-card">
+
+          <h2>📅 Nächstes Treffen</h2>
+
+          <p>
+            <strong>Datum:</strong>
+            {{ club.nextMeeting.date }}
+          </p>
+
+          <p>
+            <strong>Thema:</strong>
+            {{ club.nextMeeting.topic }}
+          </p>
+
+        </div>
+
+        <div class="content-card">
+
+          <h2>💬 Diskussionspunkte</h2>
+
+          <ul>
+            <li
+              v-for="point in club.discussionPoints"
+              :key="point"
+            >
+              {{ point }}
+            </li>
+          </ul>
+
+        </div>
+
+        <div class="content-card">
+
+          <h2>📖 Geplante Bücher</h2>
+
+          <ul>
+            <li
+              v-for="book in club.upcomingBooks"
+              :key="book"
+            >
+              {{ book }}
+            </li>
+          </ul>
 
         </div>
 
       </div>
 
-    </section>
+      <div class="members-section">
 
-    <section class="info-grid">
+        <h2>Mitglieder</h2>
 
-      <article class="info-card">
+        <div class="members-list">
 
-        <h2>Informationen</h2>
-
-        <p>
-          <strong>Erstellt:</strong>
-          {{ club.createdAt }}
-        </p>
-
-        <p>
-          <strong>Erstellt von:</strong>
-          {{ club.createdBy }}
-        </p>
-
-        <p>
-          <strong>Mitglieder:</strong>
-          {{ club.members.length }}
-        </p>
-
-      </article>
-
-      <article class="info-card">
-
-        <h2>Aktuelles Buch</h2>
-
-        <p>
-          {{ club.currentBook.title }}
-        </p>
-
-      </article>
-
-    </section>
-
-    <section class="meeting-card">
-
-      <h2>Nächstes Treffen</h2>
-
-      <p>
-        <strong>Datum:</strong>
-        {{ club.nextMeeting.date }}
-      </p>
-
-      <p>
-        <strong>Thema:</strong>
-        {{ club.nextMeeting.topic }}
-      </p>
-
-      <h3>Diskussionspunkte</h3>
-
-      <ul>
-        <li
-          v-for="point in club.discussionPoints"
-          :key="point"
-        >
-          {{ point }}
-        </li>
-      </ul>
-
-    </section>
-
-    <section class="future-books-card">
-
-      <h2>Geplante Bücher</h2>
-
-      <ul>
-        <li
-          v-for="book in club.upcomingBooks"
-          :key="book"
-        >
-          {{ book }}
-        </li>
-      </ul>
-
-    </section>
-
-    <section class="members-card">
-
-      <h2>Mitglieder</h2>
-
-      <div class="members-list">
-
-        <div
+          <div
             v-for="member in club.members"
             :key="member.id"
-            class="member clickable-member"
+            class="member-chip"
             @click="openProfile(member.id)"
-            >
+          >
             <i class="bi bi-person-fill"></i>
-
             {{ member.name }}
+          </div>
 
-            <i class="bi bi-arrow-right-short"></i>
+        </div>
+
+      </div>
+
+      <div
+        v-if="isOwner"
+        class="owner-panel"
+      >
+
+        <h2>Clubverwaltung</h2>
+
+        <button
+          class="manage-btn"
+          @click="startMeetingEdit"
+        >
+          Treffen bearbeiten
+        </button>
+
+        <div
+          v-if="editingMeeting"
+          class="meeting-editor"
+        >
+
+          <input
+            v-model="meetingDate"
+            placeholder="Datum"
+          >
+
+          <input
+            v-model="meetingTopic"
+            placeholder="Thema"
+          >
+
+          <button
+            class="save-btn"
+            @click="saveMeeting"
+          >
+            Speichern
+          </button>
+
         </div>
 
       </div>
@@ -198,21 +287,45 @@ function openProfile(memberId) {
 </template>
 
 <style scoped>
-.club-detail-page {
+.club-page {
   min-height: calc(100vh - 80px);
 
   background:
-    radial-gradient(circle at top right,
+    radial-gradient(
+      circle at top right,
       rgba(138,161,177,.16),
-      transparent 34%),
+      transparent 34%
+    ),
     var(--beige);
 
   padding: 3rem clamp(1.5rem, 6vw, 6rem);
 }
 
-.club-header {
+.club-card {
   max-width: 1200px;
-  margin: 0 auto 2rem;
+  margin: auto;
+
+  background: rgba(247,241,230,.76);
+
+  border-radius: 28px;
+
+  padding: 2rem;
+
+  border: 1px solid rgba(255,255,255,.45);
+
+  box-shadow:
+    0 12px 30px rgba(0,0,0,.08),
+    inset 0 1px 0 rgba(255,255,255,.7);
+}
+
+.club-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  gap: 2rem;
+
+  margin-bottom: 2rem;
 }
 
 .title-row {
@@ -223,47 +336,67 @@ function openProfile(memberId) {
 
 .title-row h1 {
   font-family: Georgia, serif;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  margin: 0;
 }
 
 .official-badge {
-  padding: .35rem .8rem;
+  background: rgba(138,161,177,.15);
+  color: var(--accent);
+
+  padding: .4rem .8rem;
 
   border-radius: 999px;
-
-  background: rgba(138,161,177,.15);
-
-  color: var(--accent);
 }
 
 .club-description {
+  margin: 1rem 0;
   color: var(--text-muted);
 }
 
-.info-grid {
-  max-width: 1200px;
-  margin: auto;
+.club-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
 
-  display: grid;
-  grid-template-columns: repeat(2,1fr);
-
-  gap: 1rem;
+  color: var(--text-muted);
 }
 
-.info-card,
-.meeting-card,
-.future-books-card,
-.members-card {
-  max-width: 1200px;
+.content-grid {
+  display: grid;
 
-  margin: 1rem auto;
+  grid-template-columns: repeat(2, 1fr);
 
-  background: rgba(247,241,230,.76);
+  gap: 1rem;
 
-  border-radius: 24px;
+  margin-bottom: 2rem;
+}
 
-  padding: 1.4rem;
+.content-card {
+  background: rgba(255,255,255,.55);
 
-  border: 1px solid rgba(255,255,255,.45);
+  padding: 1.5rem;
+
+  border-radius: 20px;
+}
+
+.content-card h2 {
+  margin-bottom: 1rem;
+  font-family: Georgia, serif;
+}
+
+.big-text {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.members-section {
+  margin-top: 1rem;
+}
+
+.members-section h2 {
+  font-family: Georgia, serif;
+  margin-bottom: 1rem;
 }
 
 .members-list {
@@ -272,27 +405,88 @@ function openProfile(memberId) {
   gap: .75rem;
 }
 
-.member {
-  background: rgba(255,255,255,.5);
-
-  padding: .5rem .9rem;
+.member-chip {
+  background: rgba(255,255,255,.65);
 
   border-radius: 999px;
-}
 
-.clickable-member {
+  padding: .6rem 1rem;
+
   cursor: pointer;
-
-  transition: .2s;
 
   display: flex;
   align-items: center;
-  gap: .4rem;
+  gap: .5rem;
+
+  transition: .2s;
 }
 
-.clickable-member:hover {
+.member-chip:hover {
   transform: translateY(-2px);
+}
 
-  background: rgba(138,161,177,.15);
+.join-btn,
+.leave-btn,
+.manage-btn,
+.save-btn {
+  border: none;
+
+  border-radius: 999px;
+
+  padding: .75rem 1.2rem;
+
+  cursor: pointer;
+}
+
+.join-btn {
+  background: #6a9e7f;
+  color: white;
+}
+
+.leave-btn {
+  background: #c97c7c;
+  color: white;
+}
+
+.manage-btn,
+.save-btn {
+  background: var(--accent);
+  color: white;
+}
+
+.owner-panel {
+  margin-top: 2rem;
+
+  padding-top: 2rem;
+
+  border-top: 1px solid rgba(0,0,0,.08);
+}
+
+.meeting-editor {
+  margin-top: 1rem;
+
+  display: flex;
+  gap: .75rem;
+  flex-wrap: wrap;
+}
+
+.meeting-editor input {
+  padding: .75rem;
+
+  border-radius: 12px;
+
+  border: 1px solid var(--border);
+}
+
+@media (max-width: 768px) {
+
+  .club-header {
+    flex-direction: column;
+  }
+
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+
 }
 </style>

@@ -4,13 +4,12 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth.js'
 import { useLibraryStore } from '../stores/library.js'
 import { useFriendsStore } from '../stores/friends.js'
-
+import { useBookClubStore } from '../stores/bookclubs.js'
 
 const router = useRouter()
 const authStore = useAuthStore()
 const libraryStore = useLibraryStore()
 const showFullDescription = ref(false)
-
 const currentBook = computed(() => {
   return libraryStore.currentBooks[0] || null
 })
@@ -44,8 +43,22 @@ const recommendedBooks = [
 ]
 
 const friendsStore = useFriendsStore()
+const bookClubStore = useBookClubStore()
 
 const friends = computed(() => friendsStore.friends.slice(0, 3))
+
+const activeBookClubs = computed(() => {
+
+  if (!authStore.user)
+    return []
+
+  return bookClubStore.clubs.filter(club =>
+    club.members.some(
+      member => member.id === authStore.user.id
+    )
+  )
+
+})
 
 function goToFriendProfile(friendId) {
   router.push(`/friends/${friendId}`)
@@ -65,6 +78,10 @@ const progress = computed(() => {
 
 function goToBook(id) {
   router.push(`/product/${id}`)
+}
+
+function goToBookClub(clubId) {
+  router.push(`/bookclubs/${clubId}`)
 }
 
 function saveProgress() {
@@ -198,6 +215,53 @@ function saveProgress() {
   </div>
 </div>
 
+<div
+  v-if="activeBookClubs.length"
+  class="bookclubs-section"
+>
+
+  <div class="section-header">
+
+    <h3>
+      Buchclubs
+    </h3>
+
+    <button
+      class="details-link"
+      @click="router.push('/bookclubs')"
+    >
+      Alle anzeigen
+    </button>
+
+  </div>
+
+  <div
+    v-for="club in activeBookClubs"
+    :key="club.id"
+    class="bookclub-card"
+    @click="goToBookClub(club.id)"
+  >
+
+    <div>
+
+      <strong>
+        {{ club.name }}
+      </strong>
+
+      <p>
+        {{ club.nextMeeting.topic }}
+      </p>
+
+    </div>
+
+    <div class="meeting-date">
+      {{ club.nextMeeting.date }}
+    </div>
+
+  </div>
+
+</div>
+
 </article>
 
       <aside class="stats-card">
@@ -282,7 +346,7 @@ function saveProgress() {
       <section class="recommend-card">
         <div class="section-header">
           <h2>Für dich empfohlen</h2>
-          <button class="details-link" @click="router.push('/')">
+          <button class="details-link" @click="router.push('/books')">
             Mehr entdecken
           </button>
         </div>
@@ -702,5 +766,54 @@ function saveProgress() {
 
   padding: .2rem .6rem;
   border-radius: 999px;
+}
+
+.bookclubs-section {
+  margin-top: 2rem;
+
+  padding-top: 1.5rem;
+
+  border-top: 1px solid var(--border);
+}
+
+.bookclubs-section h3 {
+  font-family: Georgia, serif;
+  margin: 0;
+}
+
+.bookclub-card {
+  margin-top: 1rem;
+
+  background: rgba(255,255,255,.7);
+
+  border-radius: 18px;
+
+  padding: 1rem 1.2rem;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  cursor: pointer;
+
+  transition: .2s;
+}
+
+.bookclub-card:hover {
+  transform: translateY(-2px);
+}
+
+.bookclub-card p {
+  margin: .25rem 0 0;
+
+  color: var(--text-muted);
+
+  font-size: .9rem;
+}
+
+.meeting-date {
+  color: var(--accent);
+
+  font-weight: 600;
 }
 </style>

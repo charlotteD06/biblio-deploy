@@ -93,17 +93,24 @@ function createClub() {
             {{ club.description }}
           </p>
 
-          <div class="club-info">
+      <div class="club-info">
 
-            <span>
-              👥 {{ club.members.length }} Mitglieder
-            </span>
+        <div class="info-item">
+          <strong>Aktuelles Buch</strong>
+          <span>{{ club.currentBook.title }}</span>
+        </div>
 
-            <span>
-              📚 {{ club.currentBook.title }}
-            </span>
+        <div class="info-item">
+          <strong>Nächstes Treffen</strong>
+          <span>{{ club.nextMeeting.date }}</span>
+        </div>
 
-          </div>
+        <div class="info-item">
+          <strong>Mitglieder</strong>
+          <span>{{ club.members.length }}</span>
+        </div>
+
+      </div>
 
           <button
             class="details-btn"
@@ -136,17 +143,19 @@ function createClub() {
             {{ club.description }}
           </p>
 
-          <div class="club-info">
+<div class="club-info">
 
-            <span>
-              👥 {{ club.members.length }} Mitglieder
-            </span>
+      <div class="info-item">
+        <strong>Erstellt von</strong>
+        <span>{{ club.createdBy }}</span>
+      </div>
 
-            <span>
-              👤 {{ club.createdBy }}
-            </span>
+      <div class="info-item">
+        <strong>Mitglieder</strong>
+        <span>{{ club.members.length }}</span>
+      </div>
 
-          </div>
+      </div>
 
           <button
             class="details-btn"
@@ -239,6 +248,10 @@ function createClub() {
   border-radius: 14px;
 
   border: 1px solid var(--border);
+  background: rgba(255,255,255,.75);
+
+  box-shadow:
+    0 8px 18px rgba(0,0,0,.04);
 }
 
 .club-section {
@@ -305,6 +318,29 @@ function createClub() {
   gap: .4rem;
 
   margin: 1rem 0;
+}
+
+.info-item {
+  display: flex;
+
+  justify-content: space-between;
+
+  padding: .55rem 0;
+
+  border-bottom: 1px solid rgba(0,0,0,.06);
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-item strong {
+  color: var(--heading);
+  font-size: .9rem;
+}
+
+.info-item span {
+  color: var(--text-muted);
 }
 
 .details-btn {

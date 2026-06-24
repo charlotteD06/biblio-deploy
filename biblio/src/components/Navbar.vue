@@ -44,7 +44,7 @@
       :to="authStore.isUser ? '/home' : '/'"
       @click="closeMenu"
     >
-      {{ authStore.isLoggedIn ? 'Home' : 'Startseite' }}
+      {{ authStore.isUser ? 'Home' : 'Startseite' }}
     </router-link>
   </li>
 
@@ -95,6 +95,15 @@
     <router-link class="nav-link" :to="{ name: 'create' }" @click="closeMenu">
       New Book
     </router-link>
+  </li>
+
+  <li class="nav-item" v-if="authStore.isAdmin">
+    <routerLink class="nav-link"
+      v-if="authStore.isAdmin"
+      to="/admin"
+    >
+      Dashboard
+    </routerLink>
   </li>
 
   <li class="nav-item" v-if="authStore.isLoggedIn">

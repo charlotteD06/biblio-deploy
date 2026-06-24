@@ -19,6 +19,9 @@ import UsersView from '../views/UsersView.vue'
 import BookClubsView from '../views/BookClubsView.vue'
 import BookClubDetailView from '../views/BookClubDetailView.vue'
 import CreateBookClubView from '../views/CreateBookClubView.vue'
+import AdminDashboardView from '../views/AdminDashboardView.vue'
+import AdminBookClubsView from '../views/AdminBookClubsView.vue'
+import BooksView from '../views/BooksView.vue'
 
 import { useAuthStore } from '../stores/auth.js'
 
@@ -125,6 +128,19 @@ const router = createRouter({
     path: '/bookclubs/create',
     component: CreateBookClubView
    },
+   {
+  path: '/admin',
+  component: AdminDashboardView
+  },
+  {
+  path: '/admin/bookclubs',
+  component: AdminBookClubsView
+  },
+  {
+  path: '/books',
+  name: 'books',
+  component: BooksView
+  },
   ]
 })
 

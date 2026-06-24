@@ -11,6 +11,8 @@ export const useBookClubStore = defineStore('bookclubs', {
       {
         id: 1,
 
+        ownerId: 999,
+
         name: 'Contemporary Fiction Club',
 
         official: true,
@@ -63,6 +65,8 @@ export const useBookClubStore = defineStore('bookclubs', {
 
       {
         id: 2,
+
+        ownerId: 999,
 
         name: 'Fantasy Readers',
 
@@ -165,6 +169,22 @@ export const useBookClubStore = defineStore('bookclubs', {
         )
         },
 
-  }
+  },
+
+  updateMeeting(clubId, meeting) {
+
+  const club = this.clubs.find(
+    c => c.id === clubId
+  )
+
+  if (!club) return
+
+  club.nextMeeting = meeting
+
+  localStorage.setItem(
+    'biblio-bookclubs',
+    JSON.stringify(this.clubs)
+  )
+},
 
 })

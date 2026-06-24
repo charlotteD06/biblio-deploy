@@ -144,6 +144,7 @@ watch(
       </div>
     </div>
   </section>
+  <div v-if="authStore.isLoggedIn">
   <div class="review-form mt-4">
 
   <h5>Bewertung schreiben</h5>
@@ -178,7 +179,34 @@ watch(
     Bewertung speichern
   </button>
 
+  </div>
+  </div>
+
+  <div
+  v-else
+  class="login-required-card"
+>
+
+  <i class="bi bi-lock-fill"></i>
+
+  <h3>
+    Bewertung schreiben
+  </h3>
+
+  <p>
+    Melde dich an oder registriere dich,
+    um Bewertungen zu schreiben.
+  </p>
+
+  <RouterLink
+    to="/login"
+    class="btn-biblio btn"
+  >
+    Anmelden
+  </RouterLink>
+
 </div>
+
 </template>
 
 <style scoped>
@@ -203,5 +231,33 @@ watch(
 .stars {
   color: #f0a500;
   font-size: 0.85rem;
+}
+
+.login-required-card {
+  margin-top: 2rem;
+
+  background: rgba(247,241,230,.76);
+
+  border-radius: 24px;
+
+  padding: 2rem;
+
+  text-align: center;
+
+  border: 1px solid rgba(255,255,255,.45);
+}
+
+.login-required-card i {
+  font-size: 2rem;
+
+  color: var(--accent);
+
+  margin-bottom: 1rem;
+}
+
+.login-required-card p {
+  color: var(--text-muted);
+
+  margin-bottom: 1rem;
 }
 </style>

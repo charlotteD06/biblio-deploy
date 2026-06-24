@@ -1,3 +1,13 @@
+<script setup>
+function scrollToBooks() {
+  const section =
+    document.getElementById('popular-section')
+
+  section?.scrollIntoView({
+    behavior: 'smooth'
+  })
+}
+</script>
 <template>
   <section class="hero">
     <div class="row align-items-center hero-content">
@@ -14,8 +24,12 @@
           Leser zu finden.
         </p>
         <div class="d-flex gap-3 justify-content-lg-start justify-content-center flex-wrap">
-          <a href="#" class="btn-biblio btn">Join Biblio</a>
-          <a href="#" class="btn-biblio-outline btn">Explore Books</a>
+          <RouterLink to="/register" class="btn-biblio btn">
+            Join Biblio
+          </RouterLink>
+          <a href="#popular-section" class="btn-biblio-outline btn">
+            Explore Books
+          </a>
         </div>
       </div>
 

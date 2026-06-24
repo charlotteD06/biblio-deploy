@@ -31,6 +31,9 @@ function createClub() {
     createdBy:
       authStore.user?.name || 'Gast',
 
+    ownerId: 
+      authStore.user?.id,
+
     createdAt:
       new Date().toLocaleDateString(),
 

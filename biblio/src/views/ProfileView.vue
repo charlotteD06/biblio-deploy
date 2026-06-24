@@ -3,9 +3,13 @@ import { ref, computed } from 'vue'
 import { useAuthStore } from '../stores/auth.js'
 import { characters } from '../stores/characters'
 import { useBookClubStore } from '../stores/bookclubs'
+import { useRouter } from 'vue-router'
+import { useLibraryStore } from '../stores/library'
 
+const router = useRouter()
 const bookClubStore = useBookClubStore()
 const authStore = useAuthStore()
+const libraryStore = useLibraryStore()
 
 const name = ref(authStore.user?.name || '')
 const email = ref(authStore.user?.email || '')
@@ -44,6 +48,10 @@ const createdClubs = computed(() => {
 
 })
 
+const booksRead = computed(() =>
+  libraryStore.completedBooks.length
+)
+
 function showCharacter(characterName) {
 
   selectedCharacterName.value = characterName
@@ -71,8 +79,16 @@ function removeCharacter(characterName) {
   selectedCharacter.value = null
 }
 
+function addFavoriteBook() {
+  router.push('/books')
+}
+
+function goToBookClub(clubId) {
+  router.push(`/bookclubs/${clubId}`)
+}
+
 const yearlyGoal = ref(50)
-const booksRead = ref(32)
+
 
 const challengeProgress = computed(() =>
   Math.round((booksRead.value / yearlyGoal.value) * 100)
@@ -266,7 +282,10 @@ function addCharacter() {
             <span>Leo Tolstoy</span>
           </div>
 
-          <div class="book-add-card">
+          <div
+            class="book-add-card"
+            @click="addFavoriteBook"
+          >
             <i class="bi bi-plus-lg"></i>
             <span>Hinzufügen</span>
           </div>
@@ -277,12 +296,20 @@ function addCharacter() {
 
         <h2>Aktive Buchclubs</h2>
 
+        <button
+          class="details-link"
+          @click="router.push('/bookclubs')"
+        >
+          Alle anzeigen
+        </button>
+
         <div class="club-grid">
 
           <div
             v-for="club in userClubs"
             :key="club.id"
-            class="club-card"
+            class="club-card clickable"
+            @click="goToBookClub(club.id)"
           >
 
             <div class="club-icon">
@@ -303,47 +330,6 @@ function addCharacter() {
 
       </article>
 
-      <article class="bookclubs-card">
-
-        <h2>Meine Buchclubs</h2>
-
-        <div
-          v-if="createdClubs.length"
-          class="clubs-list"
-        >
-
-          <div
-            v-for="club in createdClubs"
-            :key="club.id"
-            class="club-owner-card"
-          >
-
-            <div>
-
-              <strong>{{ club.name }}</strong>
-
-              <p class="owner-role">
-                Club-Ersteller
-              </p>
-
-            </div>
-
-            <span class="owner-badge">
-              👑
-            </span>
-
-          </div>
-
-        </div>
-
-        <p
-          v-else
-          class="text-muted"
-        >
-          Du hast noch keinen eigenen Buchclub erstellt.
-        </p>
-
-      </article>
 
       <article class="challenge-card">
         <div class="section-header">
@@ -574,18 +560,21 @@ function addCharacter() {
 .profile-grid {
   max-width: 1200px;
   margin: auto;
+
   display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 1rem;
+
+  grid-template-columns: 1.4fr 1fr;
+
+  gap: 1.25rem;
+
+  align-items: start;
 }
 
 .settings-card,
-.side-card,
 .favorites-card,
 .challenge-card,
 .characters-card,
-.bookclubs-card 
-{
+.bookclubs-card {
   background: rgba(247, 241, 230, 0.76);
   border: 1px solid rgba(255,255,255,0.45);
   border-radius: 24px;
@@ -594,6 +583,13 @@ function addCharacter() {
     0 12px 30px rgba(0,0,0,0.08),
     inset 0 1px 0 rgba(255,255,255,0.65);
   backdrop-filter: blur(10px);
+}
+.settings-card,
+.favorites-card,
+.challenge-card,
+.characters-card,
+.bookclubs-card {
+  min-height: 100%;
 }
 
 .settings-card {
@@ -886,8 +882,8 @@ textarea {
 }
 
 .profile-image-large {
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
 
   margin: 0 auto 1 rem;
 
@@ -1054,5 +1050,45 @@ textarea {
 
 .remove-btn:hover {
   opacity: .9;
+}
+
+.book-add-card {
+  cursor: pointer;
+}
+
+.book-add-card:hover {
+  transform: translateY(-3px);
+
+  background: rgba(255,255,255,.55);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 1rem;
+}
+
+.clickable {
+  cursor: pointer;
+
+  transition: .2s;
+}
+
+.clickable:hover {
+  transform: translateY(-2px);
+}
+
+.details-link {
+  border: none;
+
+  background: transparent;
+
+  color: var(--accent);
+
+  font-size: .9rem;
+
+  cursor: pointer;
 }
 </style>
