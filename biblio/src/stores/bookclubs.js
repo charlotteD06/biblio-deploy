@@ -151,6 +151,15 @@ export const useBookClubStore = defineStore('bookclubs', {
         )
         },
 
+        deleteClub(clubId) {
+          this.clubs = this.clubs.filter(c => c.id !== clubId)
+
+          localStorage.setItem(
+            'biblio-bookclubs',
+            JSON.stringify(this.clubs)
+          )
+        },
+
         leaveClub(clubId, userId) {
 
         const club = this.clubs.find(

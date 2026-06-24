@@ -12,7 +12,11 @@ const loginType = ref('user')
 const error = ref('')
 
 function login() {
-  const loginEmail = loginType.value === 'admin' ? 'admin@biblio.de' : email.value
+  const loginEmail =
+    loginType.value === 'admin'
+      ? 'admin@biblio.de'
+      : email.value
+
   const success = authStore.login(loginEmail, password.value)
 
   if (!success) {
@@ -20,7 +24,11 @@ function login() {
     return
   }
 
-  router.push(authStore.isAdmin ? '/' : '/home')
+  if (authStore.isAdmin) {
+    router.push('/admin')
+  } else {
+    router.push('/home')
+  }
 }
 </script>
 

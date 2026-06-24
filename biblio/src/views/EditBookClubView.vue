@@ -1,53 +1,33 @@
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useBookClubStore } from '../stores/bookclubs'
-import { useAuthStore } from '../stores/auth'
 
+const route = useRoute()
 const router = useRouter()
+const store = useBookClubStore()
 
-const bookClubStore = useBookClubStore()
-const authStore = useAuthStore()
+const club = ref(
+  JSON.parse(
+    JSON.stringify(
+      store.clubs.find(c => c.id === Number(route.params.id))
+    )
+  )
+)
 
-// FULL OBJECT (wie EditView!)
-const club = ref({
-  name: '',
-  description: '',
-  createdBy: authStore.user?.name || 'Gast',
-  ownerId: authStore.user?.id,
-  official: false,
+function save() {
+  const index = store.clubs.findIndex(
+    c => c.id === club.value.id
+  )
 
-  currentBook: {
-    id: Date.now(),
-    title: '',
-    author: ''
-  },
+  store.clubs[index] = club.value
 
-  nextMeeting: {
-    date: '',
-    topic: ''
-  },
+  localStorage.setItem(
+    'biblio-bookclubs',
+    JSON.stringify(store.clubs)
+  )
 
-  discussionPoints: [],
-  upcomingBooks: [],
-  members: [
-    {
-      id: authStore.user?.id || 0,
-      name: authStore.user?.name || 'Gast'
-    }
-  ]
-})
-
-function createClub() {
-  if (!club.value.name || !club.value.description)
-    return
-
-  bookClubStore.addClub({
-    ...club.value,
-    createdAt: new Date().toLocaleDateString()
-  })
-
-  router.push('/bookclubs')
+  router.push('/admin/bookclubs')
 }
 </script>
 
@@ -56,7 +36,7 @@ function createClub() {
 
     <section class="page-header">
       <p class="eyebrow">Administration</p>
-      <h1>Buchclub erstellen</h1>
+      <h1>Buchclub bearbeiten</h1>
     </section>
 
     <section class="edit-card">
@@ -77,8 +57,9 @@ function createClub() {
       </select>
 
       <hr />
-
+      <section class="edit-card-h3">
       <h3>Aktuelles Buch</h3>
+      </section>
 
       <label>Titel</label>
       <input v-model="club.currentBook.title" />
@@ -88,17 +69,16 @@ function createClub() {
 
       <hr />
 
-      <h3>Nächstes Treffen</h3>
+      <section class="edit-card-h3">
+      <h3>Nächstes Treffen</h3></section>
 
       <label>Datum</label>
       <input type="date" v-model="club.nextMeeting.date" />
 
-      <label>Thema</label>
-      <input v-model="club.nextMeeting.topic" />
 
       <div class="actions">
-        <button class="save-btn" @click="createClub">
-          Buchclub erstellen
+        <button class="save-btn" @click="save">
+          Speichern
         </button>
 
         <button class="cancel-btn" @click="router.back()">
@@ -140,6 +120,10 @@ function createClub() {
   font-size: clamp(2.5rem, 5vw, 4rem);
 }
 
+.page-header p {
+  color: var(--text-muted);
+}
+
 .edit-card {
   max-width: 900px;
   margin: auto;
@@ -151,6 +135,11 @@ function createClub() {
   padding: 2rem;
 
   box-shadow: 0 12px 30px rgba(0,0,0,.08);
+
+}
+
+.edit-card-h3 {
+   font-family: Georgia, serif; 
 }
 
 label {
@@ -161,7 +150,7 @@ label {
   font-size: .85rem;
 }
 
-input, textarea, select {
+input, textarea {
   width: 100%;
   padding: .75rem;
   border-radius: 12px;

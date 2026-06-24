@@ -36,6 +36,15 @@ function removeFriend(friendId) {
 <template>
   <main class="friends-page">
 
+      <router-link
+      to=""
+      class="back-link mb-4 d-inline-flex align-items-center gap-2"
+      @click="$router.back()"
+    >
+      <i class="bi bi-arrow-left"></i>
+      Zurück
+    </router-link>
+
     <section class="friends-hero">
 
       <div class="hero-content">
@@ -358,6 +367,22 @@ function removeFriend(friendId) {
 
 .remove-btn:hover {
   background: rgba(189, 98, 98, 0.2);
+}
+
+.back-link {
+  text-decoration: none;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  transition: 0.2s;
+  margin-left: .1rem;
+  margin-top: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+}
+
+.back-link:hover {
+  color: var(--accent);
 }
 
 @media (max-width: 768px) {

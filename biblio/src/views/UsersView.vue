@@ -2,7 +2,9 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useFriendsStore } from '../stores/friends.js'
+import { useAuthStore } from '../stores/auth.js'
 
+const authStore = useAuthStore()
 const router = useRouter()
 const friendsStore = useFriendsStore()
 
@@ -133,6 +135,14 @@ function openProfile(id) {
     </article>
 
   </section>
+
+  <button
+  v-if="authStore.isAdmin"
+  class="delete-btn"
+  @click="deleteUser(user.id)"
+  >
+  User löschen
+  </button>
 
 </main>
 

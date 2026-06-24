@@ -2,7 +2,9 @@
 import { ref, onMounted } from 'vue'
 
 import PopularBooks from '../components/PopularBooks.vue'
+import { useAuthStore } from '../stores/auth.js'
 
+const authStore = useAuthStore()
 const API_URL = 'http://localhost:8080/api/books'
 
 const books = ref([])
@@ -83,6 +85,15 @@ onMounted(() => {
 </script>
 
 <template>
+
+    <router-link
+      to=""
+      class="back-link mb-4 d-inline-flex align-items-center gap-2"
+      @click="$router.back()"
+    >
+      <i class="bi bi-arrow-left"></i>
+      Zurück
+    </router-link>
 
   <main class="books-page">
 
@@ -178,4 +189,21 @@ onMounted(() => {
 
   border: 1px solid var(--border);
 }
+
+.back-link {
+  text-decoration: none;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  transition: 0.2s;
+  margin-left: 2rem;
+  margin-top: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+}
+
+.back-link:hover {
+  color: var(--accent);
+}
+
 </style>

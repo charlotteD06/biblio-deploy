@@ -20,6 +20,10 @@ const totalUsers = computed(
 function goToBookClubs() {
   router.push('/admin/bookclubs')
 }
+
+function goToBooks() {
+  router.push('/admin/books')
+}
 </script>
 
 <template>
@@ -72,11 +76,10 @@ function goToBookClubs() {
           <i class="bi bi-people-fill"></i>
         </div>
 
-        <h2>Buchclubs verwalten</h2>
+        <h2>Buchclubs bearbeiten</h2>
 
         <p>
-          Offizielle und private Buchclubs bearbeiten,
-          löschen und neue Clubs anlegen.
+          Offizielle und private Buchclubs bearbeiten.
         </p>
 
         <span class="card-link">
@@ -84,6 +87,61 @@ function goToBookClubs() {
         </span>
 
       </article>
+
+      <div class="admin-card" @click="router.push('/bookclubs/create')">
+
+        <div class="card-icon">
+          <i class="bi bi-plus-circle"></i>
+        </div>
+
+        <h2>Buchclub erstellen</h2>
+
+        <p>
+          Neuen Buchclub erstellen und der Community hinzufügen.
+        </p>
+
+        <span class="card-link">
+          Erstellen →
+        </span>
+
+      </div>
+
+      <article
+        class="admin-card"
+        @click="goToBooks"
+      >
+
+        <div class="card-icon">
+          <i class="bi bi-book-fill"></i>
+        </div>
+
+        <h2>Bücher verwalten</h2>
+
+        <p>
+          Alle Bücher der Plattform bearbeiten, neue Bücher hinzufügen und bestehende Inhalte aktualisieren.
+        </p>
+
+        <span class="card-link">
+          Zur Bücher-Übersicht →
+        </span>
+
+      </article>
+
+      <div class="admin-card" @click="router.push('/admin/users')">
+  <div class="card-icon">
+    <i class="bi bi-people-fill"></i>
+  </div>
+
+  <h2>User verwalten</h2>
+
+  <p>
+    Nutzer anzeigen, bearbeiten und löschen.
+  </p>
+
+  <span class="card-link">
+    Zur Verwaltung →
+  </span>
+</div>
 
     </section>
 
@@ -216,6 +274,7 @@ function goToBookClubs() {
   cursor: pointer;
 
   transition: .2s;
+  margin: 0 auto 1rem;
 }
 
 .admin-card:hover {

@@ -37,16 +37,6 @@ const userClubs = computed(() => {
 
 })
 
-const createdClubs = computed(() => {
-
-  if (!authStore.user)
-    return []
-
-  return bookClubStore.clubs.filter(
-    club => club.createdBy === authStore.user.name
-  )
-
-})
 
 const booksRead = computed(() =>
   libraryStore.completedBooks.length

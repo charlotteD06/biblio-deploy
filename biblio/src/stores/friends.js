@@ -1,90 +1,159 @@
 import { defineStore } from 'pinia'
 
+
 export const useFriendsStore = defineStore('friends', {
   state: () => ({
-    allUsers: [
-    {
-      id: 1,
-      name: 'Alina',
-      bio: 'Liest gerne Klassiker, emotionale Romane und Bücher über starke Figuren.',
-      currentBook: {
+allUsers: [
+  {
+    id: 1,
+    name: 'Alina',
+    bio: 'Liest gerne Klassiker, emotionale Romane und Bücher über starke Figuren.',
+    quote: "Ich glaube, Bücher sind die ehrlichsten Menschen.",
+
+
+
+    completedBooks: [
+      {
         id: 5,
         title: 'Anna Karenina',
         author: 'Leo Tolstoy',
         image: 'https://covers.openlibrary.org/b/isbn/9780143035008-L.jpg',
-        progress: 68
-      },
-      favoriteBooks: [
-        {
-          id: 5,
-          title: 'Anna Karenina',
-          author: 'Leo Tolstoy',
-          image: 'https://covers.openlibrary.org/b/isbn/9780143035008-L.jpg'
-        }
-      ],
-      favoriteCharacters: [
-        'Anna Karenina',
-        'Jude St. Francis',
-        'Willem Ragnarsson'
-      ]
+        country: 'Russia',
+        classic: true
+      }
+    ],
+
+    currentBook: {
+      id: 5,
+      title: 'Anna Karenina',
+      author: 'Leo Tolstoy',
+      image: 'https://covers.openlibrary.org/b/isbn/9780143035008-L.jpg',
+      progress: 68
     },
 
-    {
-      id: 2,
-      name: 'Paul',
-      bio: 'Mag Kafka, kurze philosophische Romane und Bücher, die zum Nachdenken bringen.',
-      currentBook: {
+    favoriteBooks: [
+      {
+        id: 5,
+        title: 'Anna Karenina',
+        author: 'Leo Tolstoy',
+        image: 'https://covers.openlibrary.org/b/isbn/9780143035008-L.jpg'
+      }
+    ],
+
+    favoriteCharacters: [
+      'Anna Karenina',
+      'Jude St. Francis',
+      'Willem Ragnarsson'
+    ]
+  },
+
+  {
+    id: 2,
+    name: 'Paul',
+    bio: 'Interessiere mich für philosophische und tiefgründige Literatur. Für mich sind Bücher Fragen, keine Antworten.',
+    quote: "Man lebt tausend Leben durch Bücher." ,
+
+    completedBooks: [
+      {
         id: 7,
         title: 'Der Prozess',
         author: 'Franz Kafka',
         image: 'https://covers.openlibrary.org/b/isbn/9780141182902-L.jpg',
-        progress: 100
-      },
-      favoriteBooks: [
-        {
-          id: 7,
-          title: 'Der Prozess',
-          author: 'Franz Kafka',
-          image: 'https://covers.openlibrary.org/b/isbn/9780141182902-L.jpg'
-        }
-      ],
-      favoriteCharacters: [
-        'Josef K.',
-        'Der kleine Prinz',
-        'K.'
-      ]
+        country: 'Germany',
+        classic: true
+      }
+    ],
+
+    currentBook: {
+      id: 7,
+      title: 'Der Prozess',
+      author: 'Franz Kafka',
+      image: 'https://covers.openlibrary.org/b/isbn/9780141182902-L.jpg',
+      progress: 100
     },
 
-    {
-      id: 3,
-      name: 'Peter',
-      bio: 'Liest gerne Sachbücher, Biografien und Bücher über Wirtschaft, Technik und Gesellschaft.',
-      currentBook: {
+    favoriteBooks: [
+      {
+        id: 7,
+        title: 'Der Prozess',
+        author: 'Franz Kafka',
+        image: 'https://covers.openlibrary.org/b/isbn/9780141182902-L.jpg'
+      }
+    ],
+
+    favoriteCharacters: [
+      'Josef K.',
+      'Der kleine Prinz',
+      'K.'
+    ]
+  },
+
+  {
+    id: 3,
+    name: 'Peter',
+    bio: 'Analytisch, neugierig und wissenshungrig. Er liest Bücher, um die Welt besser zu verstehen.',
+    quote: "Eine gute Geschichte verändert dich.",
+
+    completedBooks: [
+      {
         id: 2,
         title: 'Klara and the Sun',
         author: 'Kazuo Ishiguro',
         image: 'https://covers.openlibrary.org/b/isbn/9780571364879-L.jpg',
-        progress: 35
-      },
-      favoriteBooks: [
-        {
-          id: 2,
-          title: 'Klara and the Sun',
-          author: 'Kazuo Ishiguro',
-          image: 'https://covers.openlibrary.org/b/isbn/9780571364879-L.jpg'
-        }
-      ],
-      favoriteCharacters: [
-        'Klara',
-        'Der kleine Prinz',
-        'Josef K.'
-      ]
+        country: 'Japan',
+        classic: false
+      }
+    ],
+
+    currentBook: {
+      id: 2,
+      title: 'Klara and the Sun',
+      author: 'Kazuo Ishiguro',
+      image: 'https://covers.openlibrary.org/b/isbn/9780571364879-L.jpg',
+      progress: 35
     },
-    
-    {
+
+    favoriteBooks: [
+      {
+        id: 2,
+        title: 'Klara and the Sun',
+        author: 'Kazuo Ishiguro',
+        image: 'https://covers.openlibrary.org/b/isbn/9780571364879-L.jpg'
+      }
+    ],
+
+    favoriteCharacters: [
+      'Klara',
+      'Der kleine Prinz',
+      'Josef K.'
+    ]
+  },
+
+  {
     id: 4,
     name: 'Mara',
-    bio: 'Fantasy, Romance und BookTok Empfehlungen.',
+    bio: 'Taucht gerne in Fantasy-Welten ein und liebt Geschichten voller Magie, Emotionen und starken Figuren.',
+    quote: "Fantasy ist mein Zuhause.",
+
+
+    completedBooks: [
+      {
+        id: 4,
+        title: 'Fourth Wing',
+        author: 'Rebecca Yarros',
+        image: 'https://covers.openlibrary.org/b/isbn/9781649374042-L.jpg',
+        country: 'USA',
+        classic: false
+      },
+      {
+        id: 1,
+        title: 'A Little Life',
+        author: 'Hanya Yanagihara',
+        image: 'https://covers.openlibrary.org/b/isbn/9780804172707-L.jpg',
+        country: 'USA',
+        classic: true
+      }
+    ],
 
     currentBook: {
       id: 4,
@@ -118,14 +187,26 @@ export const useFriendsStore = defineStore('friends', {
   {
     id: 5,
     name: 'Lukas',
-    bio: 'Sci-Fi, Thriller und Dystopien.',
+    bio: 'Fasziniert von Science-Fiction und dystopischen Zukunftsvisionen. Er liest, was die Zukunft erzählen könnte.',
+    quote: "Man lebt tausend Leben durch Bücher.",
+
+    completedBooks: [
+      {
+        id: 2,
+        title: 'Klara and the Sun',
+        author: 'Kazuo Ishiguro',
+        image: 'https://covers.openlibrary.org/b/isbn/9780571364879-L.jpg',
+        country: 'Japan',
+        classic: false
+      }
+    ],
 
     currentBook: {
-      id: 2,
-      title: 'Klara and the Sun',
-      author: 'Kazuo Ishiguro',
-      image: 'https://covers.openlibrary.org/b/isbn/9780571364879-L.jpg',
-      progress: 198
+          id: 4,
+      title: 'Fourth Wing',
+      author: 'Rebecca Yarros',
+      image: 'https://covers.openlibrary.org/b/isbn/9781649374042-L.jpg',
+      progress: 212
     },
 
     favoriteBooks: [
@@ -145,14 +226,26 @@ export const useFriendsStore = defineStore('friends', {
   {
     id: 6,
     name: 'Sarah',
-    bio: 'New Adult, Romance und Contemporary Fiction.',
+    bio:'Liest emotionale Contemporary Fiction und Geschichten über Beziehungen, Verlust und Identität.',
+    quote: "Man lebt tausend Leben durch Bücher.",
+
+    completedBooks: [
+      {
+        id: 1,
+        title: 'A Little Life',
+        author: 'Hanya Yanagihara',
+        image: 'https://covers.openlibrary.org/b/isbn/9780804172707-L.jpg',
+        country: 'USA',
+        classic: true
+      }
+    ],
 
     currentBook: {
-      id: 1,
-      title: 'A Little Life',
-      author: 'Hanya Yanagihara',
-      image: 'https://covers.openlibrary.org/b/isbn/9780804172707-L.jpg',
-      progress: 421
+    id: 4,
+      title: 'Fourth Wing',
+      author: 'Rebecca Yarros',
+      image: 'https://covers.openlibrary.org/b/isbn/9781649374042-L.jpg',
+      progress: 112
     },
 
     favoriteBooks: [
@@ -200,7 +293,7 @@ export const useFriendsStore = defineStore('friends', {
           'Anna Karenina',
           'Jude St. Francis',
           'Willem Ragnarsson'
-        ]
+        ],
       },
       {
         id: 2,
@@ -299,6 +392,15 @@ removeFriend(id) {
   )
 
   this.save()
+},
+
+deleteUser(id) {
+  this.allUsers = this.allUsers.filter(u => u.id !== id)
+
+  // optional: auch aus friends entfernen
+  this.friends = this.friends.filter(f => f.id !== id)
+
+  this.save?.() // falls du save hast
 }
   }
 })

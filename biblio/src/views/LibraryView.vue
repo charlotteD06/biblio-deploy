@@ -34,7 +34,7 @@ function removeBook(bookId) {
         </p>
       </div>
 
-      <router-link to="/" class="add-books-btn">
+      <router-link to="/books" class="add-books-btn">
         <i class="bi bi-plus-lg me-2"></i>
         Bücher hinzufügen
       </router-link>

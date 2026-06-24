@@ -19,7 +19,7 @@
 
   
   <button
-    v-if="authStore.isLoggedIn"
+    v-if="authStore.isUser"
     class="profile-icon"
     @click="router.push('/profile')"
   >
@@ -38,7 +38,7 @@
       <div class="collapse navbar-collapse" id="navMenu">
         <ul class="navbar-nav me-auto gap-2 ms-3">
 
-  <li class="nav-item">
+  <li class="nav-item" v-if="!authStore.isAdmin">
     <router-link
       class="nav-link"
       :to="authStore.isUser ? '/home' : '/'"
@@ -49,13 +49,13 @@
   </li>
 
   <li class="nav-item" v-if="authStore.isUser">
-    <router-link class="nav-link" to="/" @click="closeMenu">
+    <router-link class="nav-link" to="/books" @click="closeMenu">
       Beliebte Bücher
     </router-link>
   </li>
 
   <li class="nav-item" v-if="authStore.isUser">
-    <router-link class="nav-link" to="/home" @click="closeMenu">
+    <router-link class="nav-link" to="/friends" @click="closeMenu">
       Freunde
     </router-link>
   </li>
@@ -67,7 +67,7 @@
   </li>
 
   <li class="nav-item" v-if="authStore.isUser">
-    <router-link class="nav-link" to="/home" @click="closeMenu">
+    <router-link class="nav-link" to="/challenges" @click="closeMenu">
       Challenges
     </router-link>
   </li>

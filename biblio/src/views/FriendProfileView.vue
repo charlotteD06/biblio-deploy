@@ -4,7 +4,9 @@ import { useRoute, useRouter } from 'vue-router'
 import { useFriendsStore } from '../stores/friends.js'
 import { characters } from '../stores/characters'
 import { useBookClubStore } from '../stores/bookclubs'
+import { useLibraryStore } from '../stores/library'
 
+const libraryStore = useLibraryStore()
 const route = useRoute()
 const router = useRouter()
 const friendsStore = useFriendsStore()
@@ -21,18 +23,11 @@ onMounted(async () => {
   }
 })
 
-const friend = computed(() => {
-
-  return (
-    friendsStore.friends.find(
-      f => f.id === Number(route.params.id)
-    ) ||
-
-    friendsStore.allUsers.find(
-      f => f.id === Number(route.params.id)
-    )
+const friend = computed(() =>
+  friendsStore.allUsers.find(
+    f => f.id === Number(route.params.id)
   )
-})
+)
 
 const friendClubs = computed(() => {
 
@@ -49,6 +44,8 @@ const friendClubs = computed(() => {
 
 })
 
+
+
 const currentBookData = computed(() =>
   books.value.find(
     b => b.id === friend.value?.currentBook.id
@@ -56,6 +53,24 @@ const currentBookData = computed(() =>
 )
 
 const selectedCharacter = ref(null)
+
+const completedBooks = computed(() =>
+  friend.value?.completedBooks || []
+)
+
+const yearlyGoal = 50
+
+const booksRead = computed(() =>
+  completedBooks.value.length
+)
+
+const challengeProgress = computed(() =>
+  Math.round((booksRead.value / yearlyGoal) * 100)
+)
+
+const booksLeft = computed(() =>
+  Math.max(yearlyGoal - booksRead.value, 0)
+)
 
 function showCharacter(characterName) {
   selectedCharacter.value =
@@ -71,15 +86,19 @@ function goToBook(id) {
 </script>
 
 <template>
-  <main class="friend-profile-page" v-if="friend">
+  <main class="friend-profile-page">
 
-    <button class="back-link" @click="router.back()">
+    <router-link
+      to=""
+      class="back-link mb-4 d-inline-flex align-items-center gap-2"
+      @click="$router.back()"
+    >
       <i class="bi bi-arrow-left"></i>
       Zurück
-    </button>
+    </router-link>
 
+    <!-- HEADER -->
     <section class="friend-hero">
-
       <div class="friend-avatar">
         <i class="bi bi-person-fill"></i>
       </div>
@@ -87,162 +106,68 @@ function goToBook(id) {
       <div>
         <p class="eyebrow">Freundesprofil</p>
         <h1>{{ friend.name }}</h1>
-        <p>{{ friend.bio }}</p>
+        <p class="bio">{{ friend.bio }}</p>
       </div>
-
     </section>
 
+    <!-- QUOTE -->
+    <section class="quote-box">
+      “{{ friend.quote }}”
+    </section>
+
+    <!-- GRID -->
     <section class="friend-grid">
 
-      <article class="profile-card current-reading-card">
+      <!-- CHALLENGE + CURRENT BOOK -->
+      <div class="card challenge-card">
 
-        <p class="eyebrow">Liest gerade</p>
+        <h2>Reading Challenge 2026</h2>
 
-        <h2>
-          {{ currentBookData?.title || friend.currentBook.title }}
-        </h2>
-
-        <p class="author">
-          {{ currentBookData?.author || friend.currentBook.author }}
-        </p>
-
-        <div class="current-reading-content">
-
-          <img
-            :src="currentBookData?.image || friend.currentBook.image"
-            :alt="currentBookData?.title"
-            class="current-book-cover"
-          >
-
-          <div class="reading-info">
-
-            <div class="progress-header">
-              <span>Lesefortschritt</span>
-              <strong>{{ friend.currentBook.progress }}%</strong>
-            </div>
-
-            <div class="progress-bar">
-              <div
-                :style="{
-                  width: friend.currentBook.progress + '%'
-                }"
-              ></div>
-            </div>
-
-            <p class="current-book-description">
-              {{ currentBookData?.description }}
-            </p>
-
-            <button
-              class="book-page-btn"
-              @click="goToBook(friend.currentBook.id)"
-            >
-              Zum Buch
-              <i class="bi bi-arrow-right"></i>
-            </button>
-
-          </div>
-
+        <div class="challenge-number">
+          <strong>{{ booksRead }}</strong> / 50 Bücher
         </div>
 
-      </article>
+        <div class="progress-bar">
+          <div
+            class="fill"
+            :style="{ width: challengeProgress + '%' }"
+          ></div>
+        </div>
 
-      <article class="profile-card books-card">
+        <p>{{ booksLeft }} Bücher bis zum Ziel</p>
+
+        <hr />
+
+        <h3>Aktuell liest</h3>
+
+        <p><strong>{{ friend.currentBook.title }}</strong></p>
+        <p class="author">{{ friend.currentBook.author }}</p>
+
+      </div>
+
+      <!-- FAVORITES -->
+      <div class="card">
 
         <h2>Lieblingsbücher</h2>
 
         <div class="favorite-books">
 
           <div
-            v-for="book in friend.favoriteBooks"
-            :key="book.id"
+            v-for="b in friend.favoriteBooks"
+            :key="b.id"
             class="book-item"
-            @click="goToBook(book.id)"
           >
-            <img
-              :src="book.image"
-              :alt="book.title"
-            >
+            <img :src="b.image" />
 
-            <strong>{{ book.title }}</strong>
-            <span>{{ book.author }}</span>
-
+            <strong>{{ b.title }}</strong>
+            <span>{{ b.author }}</span>
           </div>
 
-        </div>
-
-      </article>
-
-      <article class="bookclubs-card">
-
-        <h2>Aktive Buchclubs</h2>
-
-        <div
-          v-if="friendClubs.length"
-          class="clubs-list"
-        >
-
-          <div
-            v-for="club in friendClubs"
-            :key="club.id"
-            class="club-chip"
-          >
-            📖 {{ club.name }}
-          </div>
-
-        </div>
-
-        <p v-else>
-          Noch keinem Buchclub beigetreten.
-        </p>
-
-      </article>
-
-      <article class="profile-card characters-card">
-
-        <h2>Lieblingscharaktere</h2>
-
-        <div class="character-tags">
-
-        <button
-          v-for="character in friend.favoriteCharacters"
-          :key="character"
-          class="character-chip"
-          @click="showCharacter(character)"
-        >
-          {{ character }}
-        </button>
-
-        </div>
-
-      </article>
-
-    </section>
-    <div
-        v-if="selectedCharacter"
-        class="character-modal-backdrop"
-        @click="selectedCharacter = null"
-      >
-
-        <div
-          class="character-modal"
-          @click.stop
-        >
-          <h2>{{ selectedCharacter.book }}</h2>
-
-          <p>
-            {{ selectedCharacter.description }}
-          </p>
-
-          <button
-            class="close-btn"
-            @click="selectedCharacter = null"
-          >
-            Schließen
-          </button>
         </div>
 
       </div>
+
+    </section>
 
   </main>
 </template>
@@ -251,285 +176,163 @@ function goToBook(id) {
 .friend-profile-page {
   min-height: calc(100vh - 80px);
   padding: 3rem clamp(1.5rem, 6vw, 6rem);
+
+  background:
+    radial-gradient(circle at top right, rgba(138,161,177,0.16), transparent 34%),
+    var(--beige);
 }
 
-.back-link {
-  border: none;
-  background: none;
-  color: var(--text-muted);
-  margin-bottom: 2rem;
-  cursor: pointer;
-
-  display: inline-flex;
-  gap: .5rem;
-  align-items: center;
-}
-
+/* HERO - wie Profilseite */
 .friend-hero {
   max-width: 1200px;
-  margin: auto auto 2rem;
+  margin: 0 auto 1.5rem;
 
   display: flex;
-  gap: 1.5rem;
   align-items: center;
+  gap: 1.5rem;
+
+  padding: 2rem;
+  border-radius: 24px;
+
+  background: rgba(247,241,230,0.85);
+  border: 1px solid rgba(255,255,255,0.45);
 }
 
+/* AVATAR */
 .friend-avatar {
-  width: 100px;
-  height: 100px;
-
-  min-width: 100px;
-  min-height: 100px;
-
-  flex-shrink: 0;
-
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
-
-  background: var(--beige-dark);
 
   display: grid;
   place-items: center;
 
-  font-size: 2.5rem;
+  background: var(--beige-dark);
   color: var(--accent);
+  font-size: 2rem;
 }
 
-.eyebrow {
-  color: var(--accent);
-  text-transform: uppercase;
-  letter-spacing: .08em;
-  font-size: .8rem;
-}
-
+/* NAME */
 .friend-hero h1 {
   font-family: Georgia, serif;
-  font-size: 3rem;
+  font-size: 2.8rem;
 }
 
+/* QUOTE - wichtiger als normale Card */
+.quote-box {
+  max-width: 1200px;
+  margin: 0 auto 1rem;
+
+  padding: 1.2rem 1.5rem;
+  border-radius: 18px;
+
+  background: rgba(255,255,255,0.7);
+  font-style: italic;
+
+  border-left: 4px solid var(--accent);
+  color: var(--text-muted);
+}
+
+/* GRID - WICHTIGER FIX */
 .friend-grid {
   max-width: 1200px;
-  margin: auto;
+  margin: 0 auto;
 
   display: grid;
-  grid-template-columns: 1.2fr 1fr;
+  grid-template-columns: 1.6fr 1fr;
   gap: 1.5rem;
+  align-items: start;
 }
 
-.profile-card {
-  background: rgba(247,241,230,.85);
-
+/* CARD - NICHT FLACH MEHR */
+.card {
+  background: rgba(247,241,230,0.9);
   border-radius: 24px;
   padding: 1.6rem;
 
-  border: 1px solid rgba(255,255,255,.4);
+  border: 1px solid rgba(255,255,255,0.5);
 
   box-shadow:
-    0 10px 24px rgba(0,0,0,.08);
-}
+    0 10px 25px rgba(0,0,0,0.06),
+    inset 0 1px 0 rgba(255,255,255,0.6);
 
-.profile-card h2 {
+  transition: .25s;
   font-family: Georgia, serif;
 }
 
-.author {
-  color: var(--text-muted);
-  margin-bottom: 1rem;
+.card:hover {
+  transform: translateY(-2px);
 }
 
-.current-reading-card {
-  grid-row: span 2;
+/* CHALLENGE HIERARCHY FIX */
+.challenge-card h2 {
+  font-family: Georgia, serif;
+  font-size: 1.6rem;
 }
 
-.current-reading-content {
-  background: #8a7a70;
-
-  border-radius: 18px;
-
-  padding: 1.5rem;
-
-  display: flex;
-  gap: 1.5rem;
-
-  color: white;
-}
-
-.current-book-cover {
-  width: 140px;
-  height: 210px;
-
-  object-fit: cover;
-
-  border-radius: 10px;
-
-  flex-shrink: 0;
-}
-
-.reading-info {
-  flex: 1;
-
-  display: flex;
-  flex-direction: column;
-}
-
-.progress-header {
+.challenge-number {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  margin: 1rem 0;
+
+  font-size: 1.1rem;
 }
 
-.progress-header strong {
-  font-size: 2rem;
-  font-family: Georgia, serif;
-}
-
+/* PROGRESS BAR */
 .progress-bar {
   height: 12px;
   border-radius: 999px;
+
+  background: rgba(0,0,0,0.08);
   overflow: hidden;
-
-  margin: .8rem 0;
-
-  background: rgba(255,255,255,.25);
 }
 
-.progress-bar div {
+.progress-bar .fill {
   height: 100%;
-  background: white;
+  background: var(--accent);
 }
 
-.current-book-description {
-  line-height: 1.7;
-
-  display: -webkit-box;
-  -webkit-line-clamp: 5;
-  -webkit-box-orient: vertical;
-
-  overflow: hidden;
+/* CURRENT BOOK FIX */
+.challenge-card h3 {
+  margin-top: 1.5rem;
+  font-family: Georgia, serif;
 }
 
-.book-page-btn {
-  margin-top: auto;
-
-  border: none;
-  border-radius: 999px;
-
-  background: white;
-  color: #6f625a;
-
-  padding: .7rem 1rem;
-
-  width: fit-content;
-}
-
+/* FAVORITES*/
 .favorite-books {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: 1rem;
-}
 
-.book-item {
-  width: 120px;
-  cursor: pointer;
 }
 
 .book-item img {
   width: 100%;
-  height: 170px;
-
+  height: 160px;
+  border-radius: 10px;
   object-fit: cover;
-
-  border-radius: 8px;
 }
 
-.book-item strong,
-.book-item span {
-  display: block;
-  font-size: .85rem;
-}
-
-.book-item span {
+.back-link {
+  text-decoration: none;
   color: var(--text-muted);
-}
-
-.characters-card {
-  grid-column: 2;
-}
-
-.character-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .8rem;
-}
-
-.character-tags span {
-  background: var(--accent);
-  padding: .5rem 1rem;
-  border-radius: 999px;
-}
-
-.character-chip {
-  border: none;
-  background: var(--accent);
-
-  padding: .5rem 1rem;
-  border-radius: 999px;
-
-  cursor: pointer;
-
-  transition: .2s;
-}
-
-.character-chip:hover {
-  transform: translateY(-2px);
-}
-
-.character-modal-backdrop {
-  position: fixed;
-  inset: 0;
-
-  background: rgba(0,0,0,.4);
-
-  display: flex;
-  justify-content: center;
+  font-size: 0.88rem;
+  transition: 0.2s;
+  margin-left: .1rem;
+  margin-top: 1.5rem;
+  display: inline-flex;
   align-items: center;
-
-  z-index: 999;
+  gap: .4rem;
 }
 
-.character-modal {
-  background: var(--beige);
-
-  max-width: 500px;
-  width: 90%;
-
-  padding: 2rem;
-  border-radius: 20px;
+.back-link:hover {
+  color: var(--accent);
 }
 
-.character-modal h2 {
-  font-family: Georgia, serif;
-  margin-bottom: 1rem;
-}
-
-.close-btn {
-  margin-top: 1rem;
-
-  border: none;
-  border-radius: 999px;
-
-  padding: .6rem 1rem;
-
-  background: var(--accent);
-}
-
+/* ===== RESPONSIVE ===== */
 @media (max-width: 900px) {
-
   .friend-grid {
     grid-template-columns: 1fr;
-  }
-
-  .characters-card {
-    grid-column: auto;
   }
 
   .current-reading-card {
@@ -537,44 +340,13 @@ function goToBook(id) {
   }
 
   .current-reading-content {
-    display: grid;
-    grid-template-columns: 120px 1fr;
-    gap: 1.2rem;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .current-book-cover {
-    width: 120px;
-    height: 180px;
+    width: 100%;
+    height: auto;
   }
-}
-
-.bookclubs-card {
-  background: rgba(247,241,230,.76);
-
-  border-radius: 24px;
-
-  padding: 1.4rem;
-
-  border: 1px solid rgba(255,255,255,.45);
-}
-
-.clubs-list {
-  display: flex;
-
-  flex-wrap: wrap;
-
-  gap: .75rem;
-}
-
-.club-chip {
-  background: rgba(138,161,177,.15);
-
-  color: var(--accent);
-
-  padding: .5rem .9rem;
-
-  border-radius: 999px;
-
-  font-size: .9rem;
 }
 </style>

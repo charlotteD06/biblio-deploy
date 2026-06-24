@@ -1,41 +1,87 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useBookClubStore } from '../stores/bookclubs'
 import { useToastStore } from '../stores/toast'
 
+const router = useRouter()
+
 const bookClubStore = useBookClubStore()
-const toastStore = useToastStore()
 
 const clubs = computed(() => bookClubStore.clubs)
 
-function deleteClub(clubId) {
+const search = ref('')
 
-  const confirmed = confirm(
-    'Möchtest du diesen Buchclub wirklich löschen?'
-  )
+const filteredClubs = computed(() => {
+  return bookClubStore.clubs.filter(club => {
+    return club.name
+      .toLowerCase()
+      .includes(search.value.toLowerCase())
+  })
+})
 
-  if (!confirmed)
-    return
+function showToast(message) {
+  const toastEl = document.createElement('div')
 
+  toastEl.className =
+    'toast align-items-center text-white bg-success border-0 show position-fixed bottom-0 end-0 m-3'
+
+  toastEl.role = 'alert'
+
+  toastEl.innerHTML = `
+    <div class="d-flex">
+      <div class="toast-body">
+        ${message}
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto"></button>
+    </div>
+  `
+
+  document.body.appendChild(toastEl)
+
+  setTimeout(() => {
+    toastEl.remove()
+  }, 2500)
+}
+
+// EDIT
+function editClub(id) {
+  router.push(`/admin/bookclubs/${id}/edit`)
+}
+
+// DELETE
+function deleteClub(id) {
   bookClubStore.clubs =
-    bookClubStore.clubs.filter(
-      club => club.id !== clubId
-    )
+    bookClubStore.clubs.filter(c => c.id !== id)
 
   localStorage.setItem(
     'biblio-bookclubs',
     JSON.stringify(bookClubStore.clubs)
   )
 
-  toastStore.trigger(
-    'Buchclub gelöscht'
-  )
+  showToast('Buchclub gelöscht')
 }
 </script>
 
 <template>
 
   <main class="admin-clubs-page">
+
+    <section class="top-bar">
+
+      <div class="search-wrapper">
+        <input
+          v-model="search"
+          class="search-input"
+          placeholder="Buchclub suchen..."
+        />
+      </div>
+
+      <button class="back-btn" @click="$router.back()">
+        ← Zurück
+      </button>
+
+    </section>
 
     <section class="page-header">
 
@@ -56,7 +102,7 @@ function deleteClub(clubId) {
     <section class="clubs-grid">
 
       <article
-        v-for="club in clubs"
+        v-for="club in filteredClubs"
         :key="club.id"
         class="club-card"
       >
@@ -103,6 +149,7 @@ function deleteClub(clubId) {
 
           <button
             class="edit-btn"
+            @click="editClub(club.id)"
           >
             Bearbeiten
           </button>
@@ -264,5 +311,116 @@ function deleteClub(clubId) {
 .delete-btn {
   background: #c97c7c;
   color: white;
+}
+
+.back-link {
+  text-decoration: none;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  transition: 0.2s;
+  margin-left: .1rem;
+  margin-top: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+}
+
+.back-link:hover {
+  color: var(--accent);
+}
+
+.top-bar {
+  max-width: 1200px;
+  margin: 0 auto 2rem;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.search-wrapper {
+  flex: 1;
+  max-width: 420px;
+}
+
+.back-btn {
+  border: none;
+  background: transparent;
+
+  color: var(--text-muted);
+  font-size: 0.9rem;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.back-btn:hover {
+  color: var(--accent);
+}
+
+.search-input {
+  width: 100%;
+  max-width: 420px;
+
+  padding: 0.9rem 1rem;
+  padding-left: 2.6rem;
+
+  border-radius: 14px;
+
+  border: 1px solid rgba(255,255,255,0.6);
+
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(10px);
+
+  box-shadow:
+    0 8px 18px rgba(0,0,0,0.05),
+    inset 0 1px 0 rgba(255,255,255,0.7);
+
+  font-size: 0.95rem;
+  color: var(--text);
+
+  transition: all 0.2s ease;
+
+  margin-bottom: 1.5rem;
+}
+
+/* Placeholder */
+.search-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Hover */
+.search-input:hover {
+  transform: translateY(-1px);
+}
+
+/* Focus */
+.search-input:focus {
+  outline: none;
+  border-color: var(--accent);
+
+  box-shadow:
+    0 10px 22px rgba(0,0,0,0.08),
+    0 0 0 3px rgba(138,161,177,0.2);
+}
+
+/* Optional: Search Icon */
+.search-wrapper {
+  position: relative;
+  max-width: 420px;
+  margin-bottom: 1.5rem;
+}
+
+.search-wrapper::before {
+  content: "🔍";
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.6;
+  font-size: 0.95rem;
+  pointer-events: none;
 }
 </style>

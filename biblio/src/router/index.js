@@ -128,10 +128,6 @@ const router = createRouter({
     path: '/bookclubs/create',
     component: CreateBookClubView
    },
-   {
-  path: '/admin',
-  component: AdminDashboardView
-  },
   {
   path: '/admin/bookclubs',
   component: AdminBookClubsView
@@ -141,6 +137,24 @@ const router = createRouter({
   name: 'books',
   component: BooksView
   },
+  {
+  path: '/admin/books',
+  component: () => import('../views/BooksView.vue')
+  },
+  {
+  path: '/admin/bookclubs/:id/edit',
+  component: () => import('../views/EditBookClubView.vue')
+  },
+  {
+  path: '/admin',
+  component: AdminDashboardView,
+  meta: { requiresAdmin: true }
+  },
+  {
+  path: '/admin/users',
+  component: () => import('../views/AdminUsersView.vue'),
+  meta: { requiresAdmin: true }
+  }
   ]
 })
 
