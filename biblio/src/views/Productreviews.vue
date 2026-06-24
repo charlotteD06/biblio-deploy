@@ -27,8 +27,8 @@ async function fetchReviews() {
 
   try {
     const response = await fetch(
-      `http://localhost:8080/api/books/${props.productId}/reviews`
-    )
+      `${import.meta.env.VITE_API_BASE_URL}/api/books/${props.productId}/reviews`
+      )
 
     if (!response.ok) throw new Error()
 
@@ -57,7 +57,7 @@ async function fetchReviews() {
 
   try {
     const response = await fetch(
-      `http://localhost:8080/api/books/${props.productId}/reviews`,
+      ${import.meta.env.VITE_API_BASE_URL}/api/books/${props.productId}/reviews`,
       {
         method: 'POST',
         headers: {
