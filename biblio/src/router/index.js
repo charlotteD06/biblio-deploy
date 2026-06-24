@@ -26,7 +26,7 @@ import BooksView from '../views/BooksView.vue'
 import { useAuthStore } from '../stores/auth.js'
 
 const router = createRouter({
-  history: createWebHistory('/'),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
