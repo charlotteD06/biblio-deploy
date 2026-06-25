@@ -46,7 +46,7 @@ const route = useRoute()
 
 onMounted(async () => {
   try {
-    const response = await fetch('http://localhost:8080/api/books')
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/books`)
     if (!response.ok) throw new Error()
 
     const books = await response.json()

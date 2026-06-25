@@ -9,7 +9,7 @@ import HeroSection from '../components/HeroSection.vue'
 import BookFilter from '../components/BookFilter.vue'
 
 
-const API_URL = 'http://localhost:8080/api/books'
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/books`
 
 const books = ref([])
 const isLoading = ref(true)

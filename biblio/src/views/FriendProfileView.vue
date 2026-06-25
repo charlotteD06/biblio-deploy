@@ -16,7 +16,7 @@ const books = ref([])
 
 onMounted(async () => {
   try {
-    const response = await fetch('http://localhost:8080/api/books')
+    const response = await fetch('${import.meta.env.VITE_API_BASE_URL}/api/books')
     books.value = await response.json()
   } catch (err) {
     console.error(err)

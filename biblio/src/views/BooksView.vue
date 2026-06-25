@@ -4,8 +4,11 @@ import { ref, onMounted } from 'vue'
 import PopularBooks from '../components/PopularBooks.vue'
 import { useAuthStore } from '../stores/auth.js'
 
+
 const authStore = useAuthStore()
-const API_URL = 'http://localhost:8080/api/books'
+
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/books`
+
 
 const books = ref([])
 const favorites = ref([])

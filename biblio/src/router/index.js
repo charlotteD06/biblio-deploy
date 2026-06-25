@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import ProductCatalog from '../views/ProductCatalog.vue'
 import ProductDetail from '../views/ProductDetail.vue'
 import CreateBook from '../views/CreateBook.vue'
@@ -26,7 +26,7 @@ import BooksView from '../views/BooksView.vue'
 import { useAuthStore } from '../stores/auth.js'
 
 const router = createRouter({
-  history: createWebHistory('/'),
+history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',

@@ -112,7 +112,7 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth.js'
 
-const API_URL = 'http://localhost:8080/api/books'
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/books`
 
 const route = useRoute()
 const router = useRouter()

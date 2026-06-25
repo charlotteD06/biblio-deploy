@@ -107,7 +107,7 @@ import ProductReviews from '../components/ProductReviews.vue'
 const libraryStore = useLibraryStore()
 
 
-const API_URL = 'http://localhost:8080/api/books'
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/books`
 
 const route = useRoute()
 

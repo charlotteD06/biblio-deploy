@@ -24,7 +24,7 @@ async function createReview() {
   return
 
   const response = await fetch(
-    `http://localhost:8080/api/books/${props.productId}/reviews`,
+    `${import.meta.env.VITE_API_BASE_URL}/api/books/${props.productId}/reviews`,
     {
       method: 'POST',
 
@@ -58,7 +58,7 @@ async function createReview() {
 
 async function deleteReview(reviewId) {
   const response = await fetch(
-    `http://localhost:8080/api/books/${props.productId}/reviews/${reviewId}`,
+    `${import.meta.env.VITE_API_BASE_URL}/api/books/${props.productId}/reviews/${reviewId}`,
     {
       method: 'DELETE'
     }
@@ -75,7 +75,7 @@ async function fetchReviews() {
 
   try {
     const response = await fetch(
-      `http://localhost:8080/api/books/${props.productId}/reviews`
+      `${import.meta.env.VITE_API_BASE_URL}/api/books/${props.productId}/reviews`
     )
 
     if (!response.ok) throw new Error()
