@@ -88,12 +88,11 @@ const booksLeft = computed(() =>
   Math.max(yearlyGoal.value - booksRead.value, 0)
 )
 
-const favoriteCharacters = ref(
-  JSON.parse(localStorage.getItem('biblio-favorite-characters')) || [
-    'Jude St. Francis',
-    'Willem Ragnarsson',
-    'Anna Karenina'
-  ]
+const favoriteCharacters = ref([
+  'Jude St. Francis',
+  'Willem Ragnarsson',
+  'Anna Karenina'
+]
 )
 
 const showAddCharacterModal = ref(false)
